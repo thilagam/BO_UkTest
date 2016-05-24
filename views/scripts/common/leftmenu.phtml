@@ -1,0 +1,79 @@
+<!-- sidebar -->
+<div class="antiScroll">
+<div class="antiscroll-inner">
+	<div class="antiscroll-content">
+		<div class="sidebar_inner">
+			<form action="search_page.html" class="input-append" method="post" >
+				<!--<input autocomplete="off" name="query" class="search_query input-medium" size="16" type="text" placeholder="Search..." /><button type="button" class="btn" ><i class="icon-search"></i></button>-->
+			</form>
+			<div id="leftlinks">
+				<div id="side_accordion" class="accordion">
+                    {foreach from=$SubMenusLeftPanel key=myId item=i name=count}
+					    {if $myId neq 'ML3-SL4'}<!-- ///to hide some links in left panel//-->
+							<div class="accordion-group" >
+								{if $myId neq $submenuId}
+									<div class="accordion-heading">
+										<a href="/{$EP_BO_MenuUrls.$myId}?submenuId={$myId}" class="accordion-toggle1">{$i|escape:"htmlall"|stripslashes}</a>
+									</div>
+								{else}
+								<div class="accordion-heading sdb_h_active">
+									<a href="/{$EP_BO_MenuUrls.$myId}?submenuId={$myId}" class="accordion-toggle1">{$i|escape:"htmlall"|stripslashes}</a>
+								</div>
+								{/if}
+                            </div>
+                        {/if}
+                    {/foreach}
+                </div>
+            </div>
+
+            {if $smarty.get.action neq 'index'}
+				<!--Calculator Wiget-->
+				<div class="accordion-group" style="display:none">
+					<div class="accordion-heading">
+						<a href="#collapse7" data-parent="#side_accordion" data-toggle="collapse" class="accordion-toggle">
+						   <i class="icon-th"></i> Calculator
+						</a>
+					</div>
+					<div class="accordion-body collapse in" id="collapse7">
+						<div class="accordion-inner">
+							<form name="Calc" id="calc">
+								<div class="formSep control-group input-append">
+									<input type="text" style="width:130px" name="Input" /><button type="button" class="btn" name="clear" value="c" onClick="Calc.Input.value = ''"><i class="icon-remove"></i></button>
+								</div>
+								<div class="control-group">
+									<input type="button" class="btn btn-large" name="seven" value="7" onClick="Calc.Input.value += '7'" />
+									<input type="button" class="btn btn-large" name="eight" value="8" onClick="Calc.Input.value += '8'" />
+									<input type="button" class="btn btn-large" name="nine" value="9" onClick="Calc.Input.value += '9'" />
+									<input type="button" class="btn btn-large" name="div" value="/" onClick="Calc.Input.value += ' / '">
+								</div>
+								<div class="control-group">
+									<input type="button" class="btn btn-large" name="four" value="4" onClick="Calc.Input.value += '4'" />
+									<input type="button" class="btn btn-large" name="five" value="5" onClick="Calc.Input.value += '5'" />
+									<input type="button" class="btn btn-large" name="six" value="6" onClick="Calc.Input.value += '6'" />
+									<input type="button" class="btn btn-large" name="times" value="x" onClick="Calc.Input.value += ' * '" />
+								</div>
+								<div class="control-group">
+									<input type="button" class="btn btn-large" name="one" value="1" onClick="Calc.Input.value += '1'" />
+									<input type="button" class="btn btn-large" name="two" value="2" onClick="Calc.Input.value += '2'" />
+									<input type="button" class="btn btn-large" name="three" value="3" onClick="Calc.Input.value += '3'" />
+									<input type="button" class="btn btn-large" name="minus" value="-" onClick="Calc.Input.value += ' - '" />
+								</div>
+								<div class="formSep control-group">
+									<input type="button" class="btn btn-large" name="dot" value="." onClick="Calc.Input.value += '.'" />
+									<input type="button" class="btn btn-large" name="zero" value="0" onClick="Calc.Input.value += '0'" />
+									<input type="button" class="btn btn-large" name="DoIt" value="=" onClick="Calc.Input.value = Math.round( eval(Calc.Input.value) * 1000)/1000" />
+									<input type="button" class="btn btn-large" name="plus" value="+" onClick="Calc.Input.value += ' + '" />
+								</div>
+							</form>
+						</div>
+					 </div>
+					</div>
+				</div>
+			{/if}
+			<div class="push"></div>
+		</div>
+
+	</div>
+</div>
+
+

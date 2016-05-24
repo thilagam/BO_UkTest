@@ -1,0 +1,107 @@
+<script src="/BO/theme/gebo/lib/tiny_mce/jquery.tinymce.js"></script>
+{literal}
+<script language="javascript">
+$(document).ready(function() {
+
+    $('#moderationgrid').dataTable({
+        "sDom": "<'row'<'span6'<'dt_actions'>l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
+        "sPaginationType": "bootstrap",
+        "aaSorting": [[ 0, "asc" ]],
+        "aoColumns": [
+            { "sType": "formatted-num" },
+            { "sType": "string" },
+            { "sType": "string" },
+            { "sType": "natural" },
+            { "sType": "natural" },
+            { "sType": "natural" },
+            { "sType": "natural" }
+        ]
+    });
+    $("#bouser").chosen({ allow_single_deselect: false,search_contains: true  });
+});
+
+function fnloaduser()
+{
+    var bouser=$('#bouser').val();
+    window.location="/correction/moderation?submenuId=ML3-SL10&bouser="+bouser;
+}
+/////// moderation correciton page////////
+function getModerateCorrection(artId)
+{
+    var target_page = "/correction/moderationcorrection?articleid="+artId; //
+    $.post(target_page, function(data){   alert(data);
+        //$("#commentsRefuse_"+userid).val(data);
+    });
+
+}
+</script>
+{/literal}
+<div class="row-fluid">
+    <div class="span12" >
+        <h3 class="heading">Correction Moderation </h3><div >
+            <form action="/correction/moderation?submenuId={$submenuId}" method="post" id="moderation" name="moderation">
+                <strong style="position:relative;top:-10px;padding-left:30%;">Bo Users :</strong> <select name="bouser" id="bouser" onchange="fnloaduser();"  >
+                <option value="0" >Select user</option>
+                {foreach from=$userList item=user key=uk name=users}
+                <option value={$user->identifier} {if $user->identifier eq $smarty.get.bouser || $user->identifier eq $loginuser} selected{/if}>{$user->login}</option>
+                {/foreach}
+            </select>
+            </form>
+        </div>
+
+    <form action="/correction/moderation?submenuId={$submenuId}" method="post" id="moderation" name="moderation">
+        <table id="moderationgrid" class="table table-bordered table-striped table_vam">
+	  	   	<thead>
+				<tr>
+				  <th>Article</th>
+				  <th>Delivery</samp></th>
+				  <th>Writer</th>
+                  <th>Corrector</th>
+                  <th>Decision</th>
+                  <th>Date</th>
+				  <th>Decision EP</th>
+				  <!--<th><samp id="841">{$nodes[841]}</samp></th>
+				  <th><samp id="842">{$nodes[842]}</samp></th>-->
+				</tr>
+			</thead>
+			<tbody>
+			 {foreach from=$paginator key=moderation_key item=moderation_item name=moderation_loop}
+				<tr>
+					<td>
+						{$moderation_item.title|stripslashes|escape:'htmlall'|wordwrap:20:"\n":true}</td>
+					<td>
+						<a href="/ongoing/ao-details?submenuId=ML2-SL4&client_id={$moderation_item.owner}&ao_id={$moderation_item.delivery_id}">{$moderation_item.deliveryTitle|stripslashes|escape:'htmlall'}</a>
+					</td>
+					<td> <a href="/user/contributor-edit?submenuId=ML2-SL7&tab=viewcontrib&userId={$moderation_item.contributor}">{$moderation_item.contributor_name}</a></td>
+					<!-- <div class="col-two">CAT&Eacute;GORIE</div>-->
+                    <td><a href="/user/contributor-edit?submenuId=ML2-SL7&tab=viewcontrib&userId={$moderation_item.corrector}">{$moderation_item.corrector_name}</a> </td>
+                    <td> {if $moderation_item.status == 'disapproved_temp'} Refus resoumission {else} Refus d&eacute;finitif {/if}</td>
+                    <td> {$moderation_item.updated_at|date_format:"%d/%m/%Y"}</td>
+
+					<td>
+                        <!--<a  style="cursor: pointer;text-decoration: underline" onclick="return getAcceptCrtChoice('{$moderation_item.artId}','{$moderation_item.status}');">accept</a> /
+                        <a  style="cursor: pointer;text-decoration: underline" onclick="return getRefuseCrtChoice('{$moderation_item.artId}','{$moderation_item.status}');">refuse</a>-->
+                        <a  style="cursor: pointer;text-decoration: underline" href="/correction/moderation-correction?submenuId={$submenuId}&articleid={$moderation_item.artId}&status={$moderation_item.status}">
+                            <i class='splashy-application_windows_edit'></i></a>
+                    </td>
+                 </tr>
+              {/foreach}
+	         </tbody>
+	    </table>
+    </form>
+    </div>
+</div>
+
+<!--///for the correction moderate popup///-->
+<div class="modal2 hide fade" id="moderate">
+    <div class="modal-header">
+        <button class="close" onclick="closePopup('moderate');">&times;</button>
+        <h3>Moderate</h3>
+    </div>
+    <div class="modal-body">
+    </div>
+    <div class="modal-footer">
+    </div>
+</div>
+
+

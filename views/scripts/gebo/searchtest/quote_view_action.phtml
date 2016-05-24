@@ -1,0 +1,62 @@
+<div class="span12" id="quote_list">
+ 
+                  <table class="table table-bordered table-striped table_vam tdleftalign">
+                      <thead>
+                      <tr>
+                          <th>SlNo</th>
+                          <th>Client</th>
+                          <th>Category</th>
+					             	  <th>QuoteTitle</th>
+                          <th>DateOfCreation</th>
+                          <th>CreatedBy</th>
+                          <th>Status</th>
+                          <th>Turnover</th>
+                          <th>Action</th>               
+                      </tr>
+                      </thead>
+                      <tbody>
+
+                      {if $quoteResult|@count >0} 
+                        {foreach from=$quoteResult key=k item=quote} 
+                          <tr>
+                          <td>{$row_min+1}</td>
+                          <td>{$quote.Client}</td>
+                          <td>{$quote.Category}</td>
+                          <td>{$quote.QuoteTitle}</td>
+                          <td>{$quote.DateOfCreation}</td>
+                          <td>{$quote.CreatedBy}</td>
+                          <td> {$quoteType[$quote.Status]}</td>                         
+                          <td>{$quote.Turnover} &{$quote.Currency};</td>
+                          <td><button type="button" class="btn btn-info btn-lg" >View</button></td>
+                      </tr>
+                      {assign var="row_min" value=$row_min+1}
+                        {/foreach}
+                      {else}  
+                        <tr><td colspan="9">No Results found.</tr>
+                      {/if}
+
+                      <!-- {assign var="i" value=0}
+                      {while $i < $quoteResult_count}
+                      <tr>
+                          <td>{$i+1}</td>
+                          <td>{$quoteResult[$i].Client}</td>
+                          <td>{$quoteResult[$i].Category}</td>
+						  <td>{$quoteResult[$i].QuoteTitle}</td>
+                          <td>{$quoteResult[$i].DateOfCreation}</td>
+                          <td>{$quoteResult[$i].CreatedBy}</td>
+                          <td> {if $quoteResult[$i].Status ==briefing}Briefing{/if}
+                               {if $quoteResult[$i].Status ==not_done}Ongoing{/if}
+                               {if $quoteResult[$i].Status ==validated}Sent{/if}
+                               {if $quoteResult[$i].Status ==signed}Signed{/if}
+                               {if $quoteResult[$i].Status ==closed}Closed{/if}
+                               {if $quoteResult[$i].Status =='deleted'}Deleted{/if}</td>
+                         
+                         <td>{$quoteResult[$i].Turnover} €</td>
+                          <td><button type="button" class="btn btn-info btn-lg" >View</button></td>
+                      </tr>
+                      {assign var="i" value=$i+1}
+                      {/while} -->
+                     </tbody>
+                       </table>
+  
+  </div>

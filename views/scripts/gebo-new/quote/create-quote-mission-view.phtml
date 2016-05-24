@@ -1,0 +1,39 @@
+{literal}
+<link rel="stylesheet" href="/BO/theme/lbd/css/custom_quote.css" type="text/css"/>
+<script type="text/javascript" src="/BO/theme/lbd/js/jquery.bootstrap.wizard.js"></script>
+<script type="text/javascript" src="/BO/theme/lbd/js/jquery.validate.min.js"></script>
+<script type="text/javascript" src="/BO/theme/lbd/js/custom_quote.js"></script>
+
+{/literal}
+<div class="modal fade" id="mission-step" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+				<div class="modal-dialog modal-lg">
+					<div class="modal-content mission-step">
+					
+					</div>
+				</div>
+			</div>
+{include file="gebo-new/quote/header.phtml"}
+		<div class="content">
+			 <div class="container-fluid">
+				{if $missionCount gt 0 || $tech_missions|@count gt 0}
+
+					{include file="gebo-new/quote/create-quote-mission-realprice.phtml"}
+
+				{else}
+					<div class="col-md-12 mission-start">
+						<div class="text-center">
+							<p>Please create mission to display infos</p>
+							 <a href="/quote-new/create-quote-mission-popup?quote_id={$custom.quote_id}" class="btn btn-primary btn-lg"  data-toggle="modal" data-target="#mission-step">Create New Mission</a>						
+						</div>
+					</div>	
+				{/if}
+
+						<p class="text-center">		
+						<a href="/quote-new/client-brief?qaction=briefing&quote_id={$custom.quote_id}" class="btn btn-default"> View customer pitch</a>
+						{if ($missionCount gt 0 || $tech_missions|@count gt 0 ) }
+							<button class="btn btn-primary btn-fill" onclick="quotesValidation();" type="button"> Validate</button>
+						{/if}	
+					</p>
+				
+			</div>	
+		</div>

@@ -1,0 +1,323 @@
+<div class="fondTitle">MODULE MANAGMENT : {$pageName|upper}</div>
+<form action="module" method="get" name="module1">
+<table width="100%">
+	<tr class="fondtitre2">
+		<td width=10></td>
+		<td class="txtcourant" align="center">Name</td>
+		<td width=10></td>
+		<td class="txtcourant" align="center">Description</a></td>
+		<td width=10></td>
+		<td class="txtcourant" align="center">Template file</a></td>
+		<td width=10></td>
+		<td class="txtcourant" align="right">Site</a></td>
+		<td width=10></td>
+		<td class="txtcourant" align="right">Rank</a></td>
+		<td width=10></td>
+		<td class="txtcourant" align="right">Online</a></td>
+		<td width=15></td>
+		<td class="txtcourant" align="center">Language</a></td>
+		<td width=10></td>
+		<td class="txtcourant" align="right">Position</a></td>
+		<td width=10></td>
+		<td class="txtcourant" align="right">Access</a></td>
+		<td width=10></td>
+		<td class="txtcourant" align="right">Order</a></td>
+		<td width=10></td>
+		<td class="txtcourant" align="right">LastModified</td>
+		<td width=10></td>
+		<td class="txtcourant" align="left">Edit</td>
+	</tr>
+	{assign var='s'	value=0} 
+	{foreach from=$mList item=m} 
+	{assign var='position'	value=$m->getPosition()} 
+	{assign var='access' value=$m->getAccess()}
+	<tr class="{cycle values=" couleurpanier,txtcourant"}"  height="30">
+		<td width="10"></td>
+		<td><span class="txtcourant">
+		<a href="javascript:xpopen('version?moduleName={$m->getNodeName()}',900,700)">{$m->getNodeName()}</a></span>
+		</td>
+		<td width="10"></td>
+		<td><span class="txtcourant">{$m->getNodeValue()|utf8_decode}</span></td>
+		<td width="10"></td>
+		<td><span class="txtcourant">
+		<a href="javascript:xpopen('popwin?action1=load&fileName={$m->getFile()}',900,700)">{$m->getFile()}</a></span>
+		&nbsp;&nbsp; 
+			<a href="scriptversion?fileName={$m->getFile()}&moduleName={$pageName}">
+			<img height="16" width="16" src="/image/check.gif" border="0" title="script version details" name="version" />
+			</a>
+		</td>
+		<td width="10"></td>
+		<td>
+		<!-- {assign var='site'	value=$m->getSite()}
+		{if $site neq ''}
+		 <span class="txtcourant">{$site}</span>
+		{/if} -->
+		<select disabled class="buttonMultiple" style="height:40px;width:55px;" multiple>
+				{html_options options=$m->getSiteasarray()}
+		</select>
+		</td>
+		<td width="10"></td>
+		<td><span class="txtcourant">{$m->getRank()}</span></td>
+		<td width="10"></td>
+		<td><span class="txtcourant">{$m->getOnline()}</span></td>
+		<td width="10"></td>
+		<td><span class="txtcourant">{$m->getLanguage()|replace:'|':'-'}</span></td>
+		<td width="10"></td>
+		<td><span class="txtcourant">{$arrayPosition[$position]}</span></td>
+		<td width="10"></td>
+		<td><span class="txtcourant">{$accessList[$access]}</span></td>
+		<td width="10"></td>
+		<td><span class="txtcourant">{$m->getOrder()}</span></td>
+		<td width="10"></td>
+		<td><span class="txtcourant">{$m->getmodDate()}</span></td>
+		<td width="10"></td>
+		<td align="right" height="19" width="80">
+		<a href="?page={$m->getNodeName()}&do=update&mod={$smarty.get.mod}" onclick="javascript:showupdate();">
+		<img height="19" width="20" src="/image/picto/edit.png" border="0" title="Edit_array" alt="Edit_array" />
+		</a> 
+		<a	href="?page={$m->getNodeName()}&do=delete&mod={$smarty.get.mod}">
+		<img height="16" width="16" src="/image/delete.gif" border="0" title="Delete_array" alt="Delete_array" name="Delete" onclick="return disp_confirm(this.name)" /></a>
+		</td>
+		{assign var='s'	value=$s+1} 
+	</tr>
+	{/foreach}
+</table>
+<div class="divLn"></div>
+<div class="divLn"></div>
+<center><span class="txtcourant">Enter Module Name : </span>
+<input	type="text" size="20" name="moduleName" />&nbsp;&nbsp;&nbsp;
+<input	type="submit" name="search" value="ModuleCheck" class="button">
+&nbsp;&nbsp;&nbsp;
+<!--<input type="button" name="check" value="ClientCheck" class="button" onclick="loadXML(moduleName.value);">  --></center>
+<input type="hidden" name="do" value="check" /> 
+<input type="hidden" name="mod" value="{$smarty.get.mod}" /></form>
+
+<!-- Search or Add section -->
+<form action="module" method="get" name="test" id="test" onsubmit="return checkform(this);">
+<div class="divLn"></div>
+<center>
+<div id="message" style="color: #A0C544">
+<h3>{$message}</h3>
+</div>
+</center>
+<div class="divLn"></div>
+<input type="hidden" name="mod" value="{$smarty.get.mod}"/> 
+<input	type="hidden" name="do" value="add" />
+<div id="add" style="{$addDisplay}">
+<table class="profitTable" align="center" width="100%">
+	<tr>
+		<td align="center" colspan="22" class="fondtitre2">ADD MODULE</td>
+	</tr>
+	<tr class="couleurpanier" height="38">
+		<td width=10></td>
+		<td class="txtcourant" align="center">Name</td>
+		<td width=10></td>
+		<td class="txtcourant" align="center">Description</a></td>
+		<td width=10></td>
+		<td class="txtcourant" align="center">Template file</a></td>
+		<td width=10></td>
+		<td class="txtcourant" align="center">Site</a></td>
+		<td width=10></td>
+		<td class="txtcourant" align="right">Rank</a></td>
+		<td width=10></td>
+		<td class="txtcourant" align="right">Online</a></td>
+		<td width=10></td>
+		<td class="txtcourant" align="center">Language</a></td>
+		<td width=10></td>
+		<td class="txtcourant" align="right">Position</a></td>
+		<td width=10></td>
+		<td class="txtcourant" align="right">Access</a></td>
+		<td width=10></td>
+		<td class="txtcourant" align="right">Order</a></td>
+	</tr>
+	<tr class="couleurpanier" height="38">
+		<td width="10"></td>
+		<td class="txtcourant" align="center">{if $newENTRY eq 'No'} <input
+			type="text" size="20" name="page"
+			value="{$selectedModule->getNodeName()}" /> 
+			{else} 
+			<input type="text" size="20" name="page" value="{$enteredModule}" /> 
+			{/if} <input
+			type="hidden" name="hpage" value="{$selectedModule->getNodeName()}" /></td>
+		<td width="10"></td>
+		<td class="txtcourant" align="center">
+			<input type="text" size="20" name="description" value="{$selectedModule->getNodeValue()|utf8_decode}" /> 
+			<input type="hidden" name="hdescription" value="{$selectedModule->getNodeValue()|utf8_decode}" />
+		</td>
+		<td width="10"></td>
+		<td class="txtcourant" align="center">
+		<input type="text" size="20" name="file" id="file" value="{$selectedModule->getFile()}"	class="required validate-filename" /> 
+		<input type="hidden" name="hfile" value="{$selectedModule->getFile()}" /></td>
+		<div class="divLn"></div>
+		<td width="10"></td>
+		<td>
+			<select name="site[]" class="buttonMultiple" style="height:250px;width:150px;" multiple>
+				<option value="">ALL Site</option>
+				{html_options selected=$selectedModule->getSiteasarray() options=$siteList}
+			</select>
+		</td>
+		<td width="10"></td>
+		<td class="txtcourant" align="center">
+		<input type="text" size="3"	name="rank" value="{$selectedModule->getRank()}" onBlur="notNumRank(this.value);" /> 
+		<input type="hidden" size="3" name="hrank" value="{$selectedModule->getRank()}" />
+		</td>
+		<td width="10"></td>
+		<td class="txtcourant" align="center">
+		<input type="text" size="3"	name="online" value="{$selectedModule->getOnline()}" onBlur="notNumOnline(this.value);" /> 
+		<input type="hidden" size="3" name="honline" value="{$selectedModule->getOnline()}" /></td>
+		<td width="10"></td>
+		<td>
+			{assign var='ss' value=$selectedModule->getLanguage()}
+			{if $ss|needle:'fr'}
+			{assign var='dfr' value=selected}
+			{else}
+			{assign var='dfr' value=''}
+			{/if}
+			{if $ss|needle:'en'}
+			{assign var='chken' value=selected}
+			{/if}
+			{if $ss|needle:'pt'}
+			{assign var='chkpt' value=selected}
+			{/if}
+			{if $ss|needle:'in'}
+			{assign var='chkin' value=selected}
+			{/if}
+			<select name="countryLang[]" size="4" multiple>
+				<option {$dfr}>fr</option>
+				<option {$chken}>en</option>
+				<option {$chkpt}>pt</option>
+				<option {$chkin}>in</option>
+		    </select>
+			<input type="hidden" name="hlanguage" value="{$selectedModule->getLanguage()}" />
+			<input type="hidden" name="hlanguage"
+			value="{$selectedModule->getLanguage()}" /></td>
+		<td width="10"></td>
+		<td>
+			<select name="position" class="button">
+				{html_options options=$arrayPosition
+				selected=$selectedModule->getPosition()}
+			</select>
+		<td width="10">
+			<input type="hidden" name="hposition" value="{$selectedModule->getPosition()}" />
+		</td>
+		<td><select name="access" class="button">
+			{html_options options=$accessList
+			selected=$selectedModule->getAccess()}
+		</select> 
+			<input type="hidden" name="haccess"	value="{$selectedModule->getAccess()}" /> 
+			<input type="hidden" name="hmodDate" value="{$selectedModule->getmodDate()}" />
+		</td>
+		<td width="10"></td>
+		<td class="txtcourant" align="center">
+			<input type="text" size="3"	name="order" value="{$selectedModule->getOrder()}" onBlur="notNumOrder(this.value);" /> 
+			<input type="hidden" name="horder" value="{$selectedModule->getOrder()}" />
+		</td>
+		<td width="10"></td>
+	</tr>
+	<tr>
+		<td colspan="20" align="center">
+			<input type="submit" name="ajouter" value="Submit"	class="button">
+		</td>
+	<td width="10"></td>
+	</tr>
+</table>
+</div>
+</form>
+{literal}
+<script type="text/javascript">
+	function formCallback(result, form) 
+	{
+		window.status = "valiation callback for form '" + form.id + "': result = " + result;
+	}					
+	var valid = new Validation('test', {immediate : true, onFormValidate : formCallback});
+</script>
+{/literal}
+<form action="module" method="get" name="module2">
+<input type="hidden" name="mod" value="{$smarty.get.mod}" /> 
+<input type="hidden" name="do" value="AddToPage" /> 
+<input type="hidden" name="enteredModule" value="{$enteredModule}" />
+<div id="search" style="{$searchDisplay}">
+<table class="profitTable" align="center" width="100%">
+	<tr>
+		<td align="center" colspan="22" class="couleurpanier">
+		<h3>
+		<div id="smodule"></div>
+		</h3>
+		</td>
+	</tr>
+	<tr></tr>
+	<tr class="fondtitre2" height="38">
+		<td width=10></td>
+		<td class="txtcourant" align="center">Page_Name</td>
+		<td width=10></td>
+		<td class="txtcourant" align="center">Module_Description</td>
+		<td width=10></td>
+		<td class="txtcourant" align="center">Template File</td>
+		<td width=10></td>
+		<td class="txtcourant" align="right">Rank</td>
+		<td width=10></td>
+		<td class="txtcourant" align="right">Online</td>
+		<td width=10></td>
+		<td class="txtcourant" align="center">Language</td>
+		<td width=10></td>
+		<td class="txtcourant" align="right">Position</td>
+		<td width=10></td>
+		<td class="txtcourant" align="right">Access</td>
+		<td width=10></td>
+		<td class="txtcourant" align="right">Order</td>
+	</tr>
+	{foreach from=$spage item=m}
+	<tr class="couleurpanier" height="38">
+		<td width="10"></td>
+		<td class="txtcourant" align="center">
+		<div id="spage">{$m}</div>
+		</td>
+		<td width="10"></td>
+		<td class="txtcourant" align="center">
+		<div id="sdescription">{$sdescription}</div>
+		</td>
+		<td width="10"></td>
+		<td class="txtcourant" align="center">
+		<div id="sfile"><a
+			href="javascript:xpopen('popwin?action1=load&fileName={$sfile}',900,700)">{$sfile}</a></div>
+		</td>
+		<td width="10"></td>
+		<td class="txtcourant" align="center">
+		<div id="srank">{$srank}</div>
+		</td>
+		<td width="10"></td>
+		<td class="txtcourant" align="center">
+		<div id="sonline">{$sonline}</div>
+		</td>
+		<td width="10"></td>
+		<td class="txtcourant" align="center">
+		<div id="slanguage">{$slanguage}</div>
+		</td>
+		<td width="10"></td>
+		<td class="txtcourant" align="center">
+		<div id="sposition">{$sposition}</div>
+		</td>
+		<td width="10"></td>
+		<td class="txtcourant" align="center">
+		<div id="saccess">{$saccess}</div>
+		</td>
+		<td width="10"></td>
+		<td class="txtcourant" align="center">
+		<div id="sorder">{$sorder}</div>
+		</td>
+	</tr>
+	{/foreach}
+	<tr>
+		<input type="submit" name="add"	value="ClickToAddBelowModuleToAbovePage" class="button">
+	</tr>
+</table>
+</div>
+</form>
+<div class="divLn"></div>
+<div class="divLn"></div>
+<div class="divLn"></div>
+<div class="tAlignCenter">&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="button" name="ajouter" value="Return" class="button" onClick="goTo('page');">
+</div>
+<div class="divLn"></div>
+<div class="divLn"></div>

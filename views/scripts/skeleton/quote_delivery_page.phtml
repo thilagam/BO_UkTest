@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="keywords" content="{$meta_keywords}"/>
+<meta name="description" content="{$meta_description}"/>
+{foreach from=$SubMenusLeftPanel key=myId item=i name=count}
+    {if $myId eq $submenuId}
+        <title>Edit-Place Admin : {$i|escape:"htmlall"|stripslashes}</title>
+    {/if}
+{/foreach}
+<meta name="rating" content="general"/>
+<meta name="language" content="{$lang}" />
+<link href="image/favicon/favicon.ico" rel="shortcut icon" />
+{assign var='cssfiles' value=''}
+{foreach from=$cssList item=css}
+{assign var='cssfiles' value=$cssfiles$css,}
+<link href="/BO/{$css}" type="text/css" rel="stylesheet" />
+{/foreach}
+<!--<link type="text/css" rel="stylesheet" href="/min/b=BO&f={$cssfiles|substr:-1}"/>-->
+<!--<link href="/BO/{$css}" type="text/css" rel="stylesheet" />-->
+ <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans" />
+{foreach from=$javascriptList item=javascript}
+<script language="JavaScript" type="text/javascript" src="/BO/{$javascript}"></script>
+{/foreach}
+</head>
+{if $left_menu eq 'no'}
+<body  class="menu_hover sidebar_hidden">
+{else}
+<body  class="menu_hover"> 
+{/if}
+<div id="loading_layer" style="display:none"><img src="/BO/theme/gebo/img/ajax_loader.gif" alt="" /></div>
+<!-- header -->
+<div id="maincontainer" class="clearfix">
+	<header>
+	{foreach from=$headerList item=frame}
+		{include file="$frame"}
+		{/foreach}
+	</header>
+	<!-- main content -->
+	<div id="contentwrapper">
+		<div class="main_content" style="margin-left: 0px;">
+			{foreach from=$rightList item=frame}
+				{include file="$frame"}
+			{/foreach}
+	   </div>
+	</div>
+	{literal}
+	<script type="text/javascript">
+		/* show all elements & remove preloader*/
+		setTimeout('$("html").removeClass("js")',1000);
+        /////to display success or error messages after a operation in all pages/////////
+        var flash_message="{/literal}{$actionmessages[0]}{literal}";
+        var flash_type="{/literal}{$actionmessages[1]}{literal}";
+        if(flash_message)
+        {
+            if(flash_type=='error')ftype='st-error';else ftype='st-success';
+            $.sticky(flash_message, {autoclose : 5000, position: "top-center", type: ftype });
+        }
+	</script>
+	{/literal}
+</div>
+</body>
+</html>

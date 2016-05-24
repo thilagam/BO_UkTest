@@ -1,0 +1,89 @@
+<form action="version" method="post" name="module1">
+<div class="divLn"></div>
+<div class="fondTitle">VERSION MANAGMENT FOR MODULE : {$moduleName|upper}</div>
+<div class="divLn"></div>
+<div class="divLn"></div>
+<div class="divLn"></div>
+<table width="100%">
+<tr class="fondtitre2">
+<td width=10></td>
+<td class="txtcourant" align="center">DaysDiff</td>
+<td width=10></td>
+<td class="txtcourant" align="center">TemplateFile</td>
+<td width=10></td>
+<td class="txtcourant" align="right">Rank</td>
+<td width=10></td>
+<td class="txtcourant" align="right">Online</td>
+<td width=10></td>
+<td class="txtcourant" align="center">Language</td>
+<td width=10></td>
+<td class="txtcourant" align="right">Position</td>
+<td width=10></td>
+<td class="txtcourant" align="right">Access</td>
+<td width=10></td>
+<td class="txtcourant" align="right">Order</td>
+<td width=10></td>
+<td class="txtcourant" align="right">CurrentModule</td>
+<td width=10></td>
+<td class="txtcourant" align="right">LastModified</td>
+</tr>
+{foreach from=$objVersion item=m}
+{assign var='mName' value=$m[0]->getName()}
+{if $mName|needle:$modName} 
+{assign var='position' value=$m.position}
+{assign var='access' value=$m.access}
+	<tr class="{cycle values="couleurpanier,txtcourant"}"  height="30">
+		<td width="10"></td>
+		<td>
+			<span class="txtcourant">{$m.daysBetDate}</span>
+		</td>
+		<td width="10"></td>
+		<td>
+			<span class="txtcourant">{$m.file}</span>
+		</td>
+		<td width="10"></td>
+		<td>
+			<span class="txtcourant">{$m.rank}</span>
+		</td>
+		<td width="10"></td>
+		<td>
+			<span class="txtcourant">{$m.online}</span>
+		</td>
+		<td width="10"></td>
+		<td>
+			<span class="txtcourant">{$m.language}</span>
+		</td>
+		<td width="10"></td>
+		<td>
+			<span class="txtcourant">{$position}</span>
+		</td>
+		<td width="10"></td>
+		<td>
+			<span class="txtcourant">{$access}</span>
+		</td>
+		<td width="10"></td>
+		<td>
+			<span class="txtcourant">{$m.order}</span>
+		</td>
+		<td width="10"></td>
+		<td>
+			<center><span class="txtcourant">{if $m.active eq 1}<img height="16" width="16" src="/image/check.gif" border="0" title="script version" name="version"/>{/if}</span></center>
+		</td>
+		<td width="10"></td>
+		<td>
+			<span class="txtcourant">{$m.modDate}</span>
+		</td>
+		<td width="10"></td>
+		<td>
+			<a href="?action1=create&moduleName={$moduleName}&versionName={$m[0]->getName()}"><img height="16" width="35" src="/image/apply.gif" border="0" title="Apply Version" alt="Apply_Version" name="Apply_Version"/></a>
+		</td>
+		<td width="10"></td>
+	</tr>
+{/if}
+{/foreach}
+</table>
+<div class="divLn"></div>
+<div class="divLn"></div>
+<div class="divLn"></div>
+<center><input class="button" type="button" name="close" onclick="javascript:window.close()" value="Close"></center>
+</form>

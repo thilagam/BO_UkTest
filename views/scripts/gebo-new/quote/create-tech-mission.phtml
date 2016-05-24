@@ -1,0 +1,36 @@
+
+
+<div class="col-md-12 text-center  tech-miss">
+								<div class="col-md-12 text-center">
+								 <p class="form-label">Tech Title</p>
+								<div class="form-group">
+								   <select class="form-control " required="required " id="tech_title" name='tech_title' data-placeholder="Please select a title">
+									  <option></option>
+									{foreach from=$tech_mission_title item=title_array name=title_array key=key}
+										<option value="{$key}" label="{$title_array}" {if $techmission.tech_title_id eq $key}selected{/if}>{$title_array}</option>
+									{/foreach}
+									</select>
+									<input type="hidden" value="{$techmission.tech_type}" name="tech_type" id="tech_type" >
+									</div>
+									</div>
+									<div class="col-md-12 text-center">
+									 <p class="form-label">Dur&#234;e la mission</p>
+								 <div class="form-group" >
+									 <div class="col-md-6 ">
+										<input name="tech_mission_length" id="tech_mission_length" class="form-control pull-right " type="text" value="{$techmission.tech_mission_length}">
+										</div>			
+										 <div class="col-md-6">				
+											<select name="tech_mission_length_option" id="tech_mission_length_option " class="form-control pull-left">
+											<option value="days" {if $techmission.tech_mission_length_option eq 'days'}selected="selected"{/if}>days</option>
+											</select>	
+											</div>
+										</div>
+									</div>
+									<div class="col-md-12 text-center">
+									 <p class="form-label">Cost</p>
+								 <div class="form-group" >
+										<input name="mission_cost" id="mission_cost" class="form-control input-small" type="text" value="{$techmission.mission_cost}">
+									</div>
+									</div>
+			
+							</div>

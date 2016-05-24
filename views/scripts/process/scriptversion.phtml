@@ -1,0 +1,57 @@
+<form action="scriptversion" method="post" name="script1">
+<div class="divLn"></div>
+<div class="fondTitle">SCRIPT VERSION MANAGMENT FOR FILENAME : {$fullfileName|upper}</div>
+<div class="divLn"></div>
+<div class="divLn"></div>
+<div class="divLn"></div>
+<table width="100%">
+<tr class="fondtitre2">
+<td width=10></td>
+<td class="txtcourant" align="center">FileName</td>
+<td width=10></td>
+<td class="txtcourant" align="center">Reason For Modifying</td>
+<td width=10></td>
+<td class="txtcourant" align="center">Script Modified</td>
+<td width=10></td>
+<td class="txtcourant" align="right">CurrentScript</td>
+<td width=10></td>
+<td class="txtcourant" align="right">Apply</td>
+</tr>
+{assign var='i' value=1}
+{assign var='j' value=0}
+{foreach from=$objVersion item=m}
+{assign var='mName' value=$m[0]->getName()}
+{if $mName|needle:$fileName}
+	{assign var='j' value=$i}
+	<tr class="{cycle values="couleurpanier,txtcourant"}"  height="30">
+		<td width="10"></td>
+		<td>
+			<span class="txtcourant"><a href="javascript:xpopen('popwin?action1=load&fileName={$folderName}{'/'}{$m[0]->getName()}&track=track',900,700)">Version {$i++}</a></span>
+		</td>
+		<td width="10"></td>
+		<td>
+			<span class="txtcourant">{$m[0]}</span>
+		</td>
+		<td width="10"></td>
+		<td>
+			<span class="txtcourant">{$m.modDate}</span>
+		</td>
+		<td width="10"></td>
+		<td>
+			<span class="txtcourant">{if $m.online eq 1}<img height="16" width="16" src="/image/check.gif" border="0" title="script version" name="version"/>{/if}</span>
+		</td>
+		<td width="10"></td>
+		<td>
+			<a href="?action1=create&fileName={$fullfileName}&replaceFile={$folderName}{'/'}{$m[0]->getName()}&moduleName={$moduleName}"><img height="16" width="35" src="/image/apply.gif" border="0" title="Apply this script version as current" alt="Apply_Version" name="Apply_Version"/></a>
+		</td>
+		<td width="10"></td>
+	</tr>
+{/if}
+{/foreach}
+</table>
+<div class="divLn"></div>
+<div class="divLn"></div>
+<center>
+<input type="hidden" name="moduleName" value="{$moduleName}"/>
+<input class="button" type="button" name="back" onclick="go_backto('{$moduleName}');" value="Back"></center>
+</form>

@@ -1,0 +1,580 @@
+{literal}
+<link rel="stylesheet" href="/BO/theme/lbd/lib/validation-engine/validationEngine.jquery.css" type="text/css"/>
+<script src="/BO/theme/lbd/lib/validation-engine/jquery.validationEngine-en.js" type="text/javascript" charset="utf-8"></script>
+<script src="/BO/theme/lbd/lib/validation-engine/jquery.validationEngine.js" type="text/javascript" charset="utf-8"></script>
+<style>
+	.
+	input[type=radio] {  visibility: hidden;  position: absolute;cursor:pointer;}
+	.modal-header-black {color:#fff;background-color:#404040;align:center;}
+
+</style>
+
+<script language="javascript">
+var currency='{/literal}{$create_step1.currency}{literal}';
+
+function roundnum(number)
+{
+	return Math.round(number*100)/100;
+}
+//5 decimal points
+function round5num(number)
+{
+	return Math.round(number*100000)/100000;
+}
+
+function calculateTurnover()
+{
+	
+	var suggested_price=0;
+	var current_suggested_price=0;
+	$('[id^=price_info_]').each(function () {
+		
+			var DivId = $(this).attr('id');
+			var mission_ids=DivId.split("_");		
+			var index_id=mission_ids[3];
+			
+			current_suggested_price=parseFloat($(this).text().replace(',','.'));	
+			
+			if(isNaN(current_suggested_price))	
+				current_suggested_price=0;
+			//calculating current price and selected price and assiging to suggested price			
+			suggested_price=parseFloat(current_suggested_price+suggested_price);
+			//alert(suggested_price);
+	});
+	$("#total_suggested_price").text(roundnum(suggested_price));
+	$("#total_suggested_price_hidden").val(roundnum(suggested_price));
+}	
+
+
+$(document).ready(function() {
+
+{/literal}
+    {if $user_type eq 'superadmin' || $user_type eq 'prodmanager' || $user_type eq 'salesmanager' || $user_type eq 'salesuser' || $user_type eq 'multilingue' || $user_type eq 'prodsubmanager'}
+
+   {else}
+{literal}
+   	$('[id^=overview_missions_]').radio('disable');
+ {/literal}
+ {/if}
+ {literal}
+ 
+	
+	/*adding prefix for checkboxes for validations*/
+	var prefix = "mission_";	
+	$(".selectpicker").selectpicker();
+	$('input[type="radio"]').each(function() {
+        $(this).parents('label.radio').attr("id", prefix + this.id).removeClass("validate[required]");
+    });		
+	$("#mission_view").validationEngine('attach',{prettySelect : true,autoHidePrompt: true,usePrefix: prefix});
+	$("#changeFormValue").validationEngine('attach',{prettySelect : true,autoHidePrompt: true,usePrefix: prefix});
+	
+	
+	$('.icheck').radio();
+	$('.icheckbox').checkbox();
+	
+	/* $('#showtheorical').change(function(){
+		var quote_id='{/literal}{$custom.quote_id}{literal}';
+			$input = $(this);		 
+			//$('.icheck').prop('checked', false);
+			
+			//$('.icheck').radio('uncheck');
+		
+			if($input.is(':checked')){
+				showtheorical='yes';
+				$(".real").hide();
+				$(".theorical").show();
+				id=$('input[name^="overview_missions_"]:checked').attr('id');
+				
+			}
+			else{
+				showtheorical='no';
+				$(".real").show();
+				$(".theorical").hide();
+				id=$('input[name^="roverview_missions_"]:checked').attr('id');
+				
+			}
+			if(id){
+				showtheoricalupdate(id);
+			}
+				
+			
+				$.ajax({
+				type: 'GET',
+				url: '/quote-new/update-theorical-price?quote_id='+quote_id,
+				data: 'showtheorical='+showtheorical,			  
+				success: function(data)
+				{
+				
+				}
+				});
+				
+				calculateTurnover();
+
+    }); */
+	
+	calculateTurnover();
+	
+	
+//toggle all checkboxes of details and overview tabs 
+	$('input[name^="overview_missions_"],input[name^="roverview_missions_"]').on('change',function(){		
+		
+		if($(this).is(':checked'))
+		{			
+			var DivId = $(this).attr('id');
+			showtheoricalupdate(DivId);
+		}	
+	}); 
+	
+});	
+
+
+function showtheoricalupdate(DivId)
+{
+		var mission_ids=DivId.split("_");
+			var mission_id=mission_ids[2];	
+			var index_id=mission_ids[3];	
+			
+			var checkName=$('#'+DivId).attr('name');		
+			var nameIndexes=checkName.split("_");
+			var nameIndex=nameIndexes[2].replace("[]",'');	
+
+			var selected_price=parseFloat($('#'+DivId).attr('rel'));	
+			
+			//calculating current price and selected price and assiging to suggested price
+			var suggested_price=parseFloat(selected_price);
+			
+			//alert(selected_price+'=='+suggested_price);
+			
+			$("#price_info_"+nameIndex).text(roundnum(suggested_price));
+			$("#currency_info_"+nameIndex).html(' &'+currency+';');
+			
+			$("#mission_ca_"+nameIndex).val(suggested_price);//mission total
+			
+			
+			//Added w.r.t article in left side
+			var mission_volume=parseFloat($("#mission_volume_"+index_id).text());
+
+			var article_price=(suggested_price/mission_volume);
+			//alert(suggested_price+'------'+mission_volume+' price '+article_price);
+			article_price=roundnum(article_price);
+			$("#single_article_price_"+index_id).val(article_price);
+			
+			$("#article_price_"+index_id).text(article_price.toString().replace(".",',')); //for span
+			
+			var margin=parseFloat($('#'+DivId).attr('data-margin'));
+			$("#epmargin_"+index_id).text(margin+'%');
+			
+			$("#unit_price_"+index_id).val(article_price);
+			$("#margin_percentage_"+index_id).val(margin);
+			
+			var internal_cost=roundnum((article_price*(100-margin))/100);//internal cost			
+			//alert(article_price+'--'+margin+'--'+internal_cost);
+			$("#internal_cost_"+index_id).val(internal_cost);
+			
+			/*added w.r.t HOQ popup*/
+			$("#hunit_price_"+index_id).val(article_price);
+			$("#hmargin_percentage_"+index_id).val(margin);
+			$("#hinternal_cost_"+index_id).val(internal_cost);
+			//price per word
+			var price_per_word=roundnum(parseFloat($('#'+DivId).attr('data-price-word')));
+			price_per_word=price_per_word.toString().replace(".",',');
+			//alert(price_per_word);
+			$("#price_per_word_"+index_id).text(price_per_word);
+			
+			calculateTurnover();
+}
+	
+	
+function loadeditarticle(index,tmission)
+{
+	if(tmission=='m')
+	{
+		$('#epmargin').addClass('validate[required,minWriters[0.01],maxWriters[99.99]]');
+		
+	}
+	else
+	{
+		$('#epmargin').addClass('validate[required,minWriters[0.00],maxWriters[99.99]]');
+	}
+		var unit_price=$("#article_price_"+index).text().replace(",",".");
+		var margin=$("#epmargin_"+index).text().replace("%","");	
+		$("#price_per_article").val(unit_price);
+		$("#epmargin").val(margin);
+		var internal_cost=roundnum((unit_price*(100-margin))/100);
+		//alert(unit_price+'--'+margin+'--'+internal_cost);
+		$("#internal_cost_"+index).val(internal_cost);
+		$("#missionindex").val(index);	
+
+	
+	
+}
+	
+function changeOnPrice()
+{
+	if($("#changeFormValue").validationEngine('validate'))
+{
+	var index=$("#missionindex").val();
+	var price=$('#internal_cost_'+index).val();
+	var price_per_article=$("#price_per_article").val().replace(",",".");
+	
+	var margin=(price * 100)/(price_per_article);
+	var marginval=100-margin;
+	
+	if(Math.floor(marginval) == marginval)
+		$("#epmargin").val(marginval);
+	else
+		$("#epmargin").val(round5num(marginval));	
+	}
+	
+}
+
+function changeOnMargin()
+{
+	if($("#changeFormValue").validationEngine('validate'))
+{
+	var index=$("#missionindex").val();
+	var margin=$("#epmargin").val().replace(",",".");
+	
+	var internalcost=$('#internal_cost_'+index).val();
+	var price_per_article=(internalcost/(1-margin/100));
+	
+		//alert(marginval+' min '+minval+' max '+maxval);
+	if(Math.floor(price_per_article) == price_per_article)
+		$("#price_per_article").val(price_per_article);
+	else
+		$("#price_per_article").val(roundnum(price_per_article));
+}
+}
+
+function validatearticleprice()
+{
+	if($("#changeFormValue").validationEngine('validate'))
+	{
+	var index=$("#missionindex").val();
+	var quote_id='{/literal}{$custom.quote_id}{literal}';
+	
+	var margin=$("#epmargin").val().replace(",",".");
+	var price_per_article=roundnum(parseFloat($("#price_per_article").val().replace(",",".")));
+	var internal_cost=$("#internal_cost_"+index).val();		
+	var selected_mission=$('input[name=overview_missions_'+index+']:checked').val();
+	var volume=parseInt($("#mission_volume_"+index).text());
+	var showtheorical='no';
+	if($("#showtheorical").prop('checked') == true){
+		showtheorical='yes';
+	}
+
+	$.ajax({
+		type: 'GET',
+		url: '/quote-new/update-unit-price',
+		data: 'quote_id='+quote_id+'&index=' + index + '&margin_percentage=' + margin + '&unit_price='+price_per_article+'&internal_cost='+internal_cost+'&selected_mission='+selected_mission+'&showtheorical='+showtheorical,			  
+		success: function(data)
+		{   
+			//alert(data);
+			$('#editarticleprice').modal('toggle');			
+			$("#article_price_"+index).html(price_per_article);
+			$("#epmargin_"+index).html(margin+'%');
+			
+			$("#unit_price_"+index).val(price_per_article);
+			$("#margin_percentage_"+index).val(margin);
+			
+			
+			var missionCA=roundnum(parseFloat(volume*price_per_article));
+			$("#price_info_"+index).text(missionCA);
+			calculateTurnover();
+
+		}
+	 });		
+	return false;
+	}
+}
+
+/*Form submit*/
+function quotesValidation()
+{
+	$("form#mission_view").submit();
+}
+</script>	 
+{/literal}
+				
+						<h1><small>{$create_step1.quote_title}</small><br> Catch prices on edit-place</h1>
+				
+				<form action="/quote-new/save-mission-view?quote_id={$smarty.get.quote_id}" method="POST" id="mission_view">
+						
+							{if $quote_missions|@count >0 || $tech_missions|@count >0}		
+								<div class="table-responsive">
+									<div class="card"><div class="content">
+								<table class="table table-bordered" id="price-list">
+									<tr>
+										<th class="col-md-4">
+										<h4>Mission list 
+										{if $sales_review neq 'signed'}
+											<a  href="/quote-new/create-quote-mission-popup?quote_id={$smarty.get.quote_id}"    data-toggle="modal" data-target="#mission-step"  class="btn btn-default pull-right"><i class="glyphicon glyphicon-plus"></i> Add mission</a>
+											{/if}
+											</h4>
+										</th>
+										<th colspan="4" class="col-md-6">					
+												{*<label class="checkbox" style="padding-left: 35px; width: auto; text-align: left">
+													<input id="showtheorical" name="showtheorical" type="checkbox" {if $create_mission.showtheorical eq 'yes'} checked {/if} {if $user_type eq 'superadmin'  || $user_type eq 'salesmanager' || $user_type eq 'salesuser' || $user_type eq 'multilingue' || $user_type eq 'prodsubmanager' || $user_type eq 'prodmanager'}{else} disabled="disable" {/if} class="icheckbox" data-toggle="checkbox">
+													<small>Show theorical prices</small>
+												</label>	
+												*}	
+										</th>
+											<th colspan="3" class="col-md-2 text-right total-price">
+											
+												<h2 style="margin: 0"> <small>TOTAL SELLING PRICE</small><br><span id="total_suggested_price">0</span><span id="total_currency_info">&{$create_step1.currency};</span>
+												<input name="total_suggested_price" id="total_suggested_price_hidden" type="hidden">
+												</h2>
+												
+											
+										</th>
+									</tr>
+								{foreach from=$quote_missions.tech.linked_to_prod item=tmission name="tmission"}
+											
+											{assign var=tn_index value=$smarty.foreach.tmission.index}	
+											{if $tmission eq 'all_prod' && $quote_missions.tech.$tn_index.to_perform eq 'Before'}
+											<tr id="tmid_{$quote_missions.tech.$tn_index.identifier}" class="prod-link-mission">
+												<td class="mt" colspan="5">
+													<a  {if $sales_review neq 'signed'} data-toggle="modal" data-target="#viewmission" href="/quote-new/create-quote-mission-details-popup?quote_id={$smarty.get.quote_id}&t_index={$quote_missions.tech.$tn_index.identifier}" {/if}>
+													{$quote_missions.tech.$tn_index.tech_type}
+														<p class="grey-text" style="font-size:12px;"><span class="glyphicon glyphicon-align-justify"></span>  <span id="mission_volume_{$quote_missions.tech.$tn_index.identifier}" style="padding-right:20px;"> {$quote_missions.tech.$tn_index.volume}       </span>             {$quote_missions.tech.$tn_index.language} </p>
+													</a>
+												
+												</td>
+												
+												<td class="col-xs-2 text-center margin-col-calc" {if ($user_type eq 'superadmin'  || $user_type eq 'salesmanager' || $user_type eq 'salesuser') && $sales_review neq 'signed'} data-toggle="modal" data-target="#editarticleprice" {/if} onClick="loadeditarticle({$quote_missions.tech.$tn_index.identifier},'')">
+												<span id="article_price_{$quote_missions.tech.$tn_index.identifier}">{$quote_missions.tech.$tn_index.unit_price|zero_cut:2}</span>&{$create_step1.currency};<p class="grey-text">SELLING PRICE</p>
+												<div class="epmargin label label-info" id="epmargin_{$quote_missions.tech.$tn_index.identifier}">{$quote_missions.tech.$tn_index.margin_percentage}%</div>
+												<input type="hidden" value="{$quote_missions.tech.$tn_index.margin_percentage}" id="margin_percentage_{$quote_missions.tech.$tn_index.identifier}" name="margin_percentage_{$quote_missions.tech.$tn_index.identifier}">
+												<input type="hidden" value="{$quote_missions.tech.$tn_index.unit_price}" id="unit_price_{$quote_missions.tech.$tn_index.identifier}" name="unit_price_{$quote_missions.tech.$tn_index.identifier}">
+												<input type="hidden" value="{$quote_missions.tech.$tn_index.internal_cost}" id="internal_cost_{$quote_missions.tech.$tn_index.identifier}" name="internal_cost_{$quote_missions.tech.$tn_index.identifier}">
+												</td>
+												<td class="col-xs-1 text-right brand-success">
+													<span id="price_info_{$quote_missions.tech.$tn_index.identifier}">{$quote_missions.tech.$tn_index.turnover|zero_cut:2}</span>&{$create_step1.currency};
+												</td>
+											</tr>
+											{/if}
+											{/foreach}
+								{foreach from=$quote_missions item=mission name="misson"}
+									{assign var=gn_index value=$smarty.foreach.misson.index}
+									{assign var=ms_index value=$smarty.foreach.misson.index+1}
+									{if $mission.product_name}
+										<tr id="mid_{$mission.identifier}" {if $mission.missionDetails|@count eq 0}class="history-data-null"{/if}>
+											<td class="mt">
+												<a {if $sales_review neq 'signed'} data-toggle="modal" data-target="#viewmission" href="/quote-new/create-quote-mission-details-popup?quote_id={$smarty.get.quote_id}&m_index={$mission.identifier}" {/if}>
+											Mission de {$mission.product_name} {if $mission.producttype_name}/ {$mission.producttype_name} {/if}{if $mission.nb_words} / {$mission.nb_words} Mots{/if}
+												<p class="grey-text"><span class="glyphicon glyphicon-align-justify"></span> <span id="mission_volume_{$mission.identifier}" style="padding-right:20px;"> {$mission.volume}  </span>
+												{$mission.language_name} {if $mission.product eq 'translation'} <span class="glyphicon glyphicon-triangle-right"></span> {$mission.languagedest_name}{/if}</p>
+												</a>
+											</td>
+
+											{if $mission.missionDetails|@count >0}
+												{foreach from=$mission.missionDetails item=history name="hmisson"}
+													{assign var=hgn_index value=$smarty.foreach.hmisson.index}
+													{assign var=hms_index value=$smarty.foreach.hmisson.index+1}
+													
+													<td class="col-xs-2 text-center theorical" {if $mission.showtheorical neq 'yes'}  style="display:none" {/if} colspan="3">
+														{if $history.mission_id}
+														   {math equation='(v/y)' assign=price_word v=$history.unit_price y=$history.nb_words format='%.3f'}
+														   {math equation='(x*y)' assign=price_per_art x=$mission.nb_words y=$price_word format='%.2f'}
+														   {math equation='(p*v)' assign=mturnover p=$price_per_art v=$mission.volume format='%.2f'}
+														   {math equation='((mw*hi)/hw)' assign=minternal_cost mw=$mission.nb_words hw=$history.nb_words hi=$history.internal_cost format='%.2f'}
+														   {math equation='(100-((inc/ppa)*100))' assign=margin_percentage inc=$minternal_cost ppa=$price_per_art format='%.5f'}
+														   		<label class="radio">
+																<input type="radio" name="overview_missions_{$mission.identifier}" id="overview_missions_{$history.mission_id}_{$mission.identifier}" value="{$history.mission_id}" data-price-word="{$price_word}" rel="{$mturnover}" data-margin="{$margin_percentage}" data-price-per-art="{$price_per_art}" data-internal-cost={$minternal_cost} class="icheck validate[required]" {if $history.mission_id eq $mission.selected_mission} checked {/if} data-toggle="radio"/>
+															</label>
+															<a class="hp" href="/quote-new/history-mission-details?quote_id={$smarty.get.quote_id}&mission_id={$history.mission_id}&show=theorical&from_site={$history.from_site}" data-toggle="modal" data-target="#viewHistroymission">{$history.unit_price|zero_cut:2}&{$history.currency};
+																<p class="grey-text">
+																{math assign="price_per_word"  equation='(c/d)' c=$history.unit_price d=$history.nb_words format='%.3f'} 
+																	<span class="label label-default">{$price_per_word|replace:'.':','} &{$history.currency}; / word</span><br>
+																 {$history.company_name} 
+																 <span class="label label-info plt">Theorical</span>
+																 {if $history.from_site=='fr'}<span class="label label-info plt">FR deal</span>{/if}
+																</p></a>
+																{if $sales_review neq 'signed'}
+																<a  data-target="#hoq-price-modal" data-toggle="modal"  href="/quote-new/get-hoq-prices?quote_id={$smarty.get.quote_id}&mindex={$gn_index}&mission_id={$mission.identifier}"  class="btn btn-default btn-sm btnPrice">Change selection														</a>
+																{/if}
+	
+														{else}
+															-
+														{/if}	
+														
+													</td>
+													<td class="col-xs-2 text-center real" {if $mission.showtheorical eq 'yes'}  style="display:none"{/if} colspan="3">
+														{if $history.mission_id && $history.real_cost}
+															{math equation='((x/y)*v)'  assign=price_per_art x=$mission.nb_words y=$history.nb_words v=$history.real_unit_price format='%.2f'}															
+															{math equation='(v/y)' assign=price_word v=$history.real_unit_price y=$history.nb_words format='%.3f'}												
+															{math equation='(p*v)' assign=mturnover p=$price_per_art v=$mission.volume format='%.2f'}
+															{math equation='((mw*hi)/hw)' assign=minternal_cost mw=$mission.nb_words hw=$history.nb_words hi=$history.real_cost format='%.2f'}
+															{math equation='(100-((inc/ppa)*100))' assign=margin_percentage inc=$minternal_cost ppa=$price_per_art format='%.5f'}	
+															<label class="radio">
+																<input type="radio" name="roverview_missions_{$mission.identifier}" id="roverview_missions_{$history.mission_id}_{$mission.identifier}" value="{$history.mission_id}" data-price-word="{$price_word}" rel="{$mturnover}" data-margin="{$margin_percentage}" data-price-per-art="{$price_per_art}" data-internal-cost={$minternal_cost} class="icheck validate[required]"  {if $history.mission_id eq $mission.selected_mission} checked {/if} data-toggle="radio"/>
+															</label>
+															<a class="hp" href="/quote-new/history-mission-details?quote_id={$smarty.get.quote_id}&mission_id={$history.mission_id}&show=real&from_site={$history.from_site}" data-toggle="modal" data-target="#viewHistroymission">{$history.real_unit_price|zero_cut:2}&{$history.currency};
+																<p class="grey-text">
+																{math assign="price_per_word" equation='(a/b)' a=$history.real_unit_price b=$history.nb_words format='%.3f'} 
+																	<span class="label label-default">{$price_per_word|replace:'.':','} &{$history.currency}; / word</span><br>
+																	{$history.company_name} 
+																	 <span class="label label-info plt">Real</span>
+																	{if $history.from_site=='fr'}<span class="label label-info plt">FR deal</span>{/if}
+																</p></a>
+																{if $sales_review neq 'signed'}
+																<a  data-target="#hoq-price-modal" data-toggle="modal"  href="/quote-new/get-hoq-prices?quote_id={$smarty.get.quote_id}&mindex={$gn_index}&mission_id={$mission.identifier}"  class="btn btn-default btn-sm btnPrice">Change selection														</a>
+																{/if}
+																
+														{else}
+															-
+														{/if}	
+													</td>
+												{/foreach}
+												<td class="col-xs-2 text-center margin-col-calc">
+													<span id="actual_price_{$mission.identifier}">{$mission.history_unit_price|zero_cut:2}</span>&{$create_step1.currency};<p class="grey-text">HISTORY BASIS PRICE</p>
+													<div >{$mission.history_margin_percentage}%</div>
+													
+												</td>
+												<td class="col-xs-2 text-center margin-col-calc" {if ($user_type eq 'superadmin'  || $user_type eq 'salesmanager' || $user_type eq 'salesuser') && $sales_review neq 'signed' } data-toggle="modal" data-target="#editarticleprice" {/if} onClick="loadeditarticle({$mission.identifier},'m')">
+													<span id="article_price_{$mission.identifier}">{$mission.unit_price|zero_cut:2}</span>&{$create_step1.currency};<p class="grey-text">SELLING PRICE/{if $mission.product eq 'content_strategy'}AUDIT{else}ART{/if}</p>
+													<div class="epmargin label label-info" id="epmargin_{$mission.identifier}">{$mission.margin_percentage}%</div>
+													<input type="hidden" value="{$mission.margin_percentage}" id="margin_percentage_{$mission.identifier}" name="margin_percentage_{$mission.identifier}">
+													<input type="hidden" value="{$mission.unit_price}" id="unit_price_{$mission.identifier}" name="unit_price_{$mission.identifier}">
+													<input type="hidden" value="{$mission.internal_cost}" id="internal_cost_{$mission.identifier}" name="internal_cost_{$mission.identifier}">
+												</td>
+												<td class="col-xs-1 text-right brand-success">
+													<span id="price_info_{$mission.identifier}">{$mission.turnover|zero_cut:2}</span>&{$create_step1.currency};
+												</td>
+
+											{else}
+
+												{if $mission.product_name eq 'Content Strategy'}
+													<td class="col-xs-2 text-center" colspan="4"></td>
+												{else}	
+													{if $mission.hoqPrices eq 'yes'}
+														<td class="col-xs-2 text-center" colspan="3">
+															<a data-target="#hoq-price-modal" data-toggle="modal" class="btn btn-default btnPrice" href="/quote-new/get-hoq-prices?quote_id={$smarty.get.quote_id}&mindex={$gn_index}&mission_id={$mission.identifier}" id="mission_select_price_{$mission.identifier}">
+																Select price
+															</a>	
+															<input type="hidden" value="" name="select_price_{$mission.identifier}" id="select_price_{$mission.identifier}" class="validate[required]">
+														</td>
+														<td class="col-xs-2 text-center margin-col-calc">
+															<span id="actual_price_{$mission.identifier}">{$mission.history_unit_price|zero_cut:2}</span>&{$create_step1.currency};<p class="grey-text">HISTORY BASIS PRICE</p>
+															<div >{$mission.history_margin_percentage}%</div>
+														</td>
+													{else}
+														<td class="col-xs-2 text-center" colspan="3"> No suggested prices </td>
+														<td class="col-xs-2 text-center">
+															No history price
+														</td>
+													{/if}	
+												{/if}	
+												<!---->
+												<td class="text-center margin-col-calc" {if $mission.product_name eq 'Content Strategy' && ($user_type eq 'superadmin'  || $user_type eq 'salesmanager' || $user_type eq 'salesuser') && $sales_review neq 'signed'}data-toggle="modal" data-target="#editarticleprice"  onClick="loadeditarticle({$mission.identifier},'m')" {/if}>
+													<span id="article_price_{$mission.identifier}">{$mission.unit_price|zero_cut:2}</span>&{$create_step1.currency};<p class="grey-text">SELLING PRICE/{if $mission.product eq 'content_strategy'}AUDIT{else}ART{/if}</p>
+													<div class="epmargin label label-info" id="epmargin_{$mission.identifier}">{$mission.margin_percentage}%</div>
+													<input type="hidden" value="{$mission.margin_percentage}" id="margin_percentage_{$mission.identifier}" name="margin_percentage_{$mission.identifier}">
+													<input type="hidden" value="{$mission.unit_price}" id="unit_price_{$mission.identifier}" name="unit_price_{$mission.identifier}">
+													<input type="hidden" value="{$mission.internal_cost}" id="internal_cost_{$mission.identifier}" name="internal_cost_{$mission.identifier}">
+												</td>
+												<td class="text-center brand-success">
+													<span id="price_info_{$mission.identifier}">{$mission.turnover|zero_cut:2}</span>&{$create_step1.currency};
+												</td>
+												{*{else}
+												<!--<td class="text-center"> - </td>
+												<td class="text-center"> - </td>
+												<td class="text-center"> - </td>
+												<td class="text-center"> - </td>
+												<td class="text-center"> - </td>
+												<input type="hidden" id="mis_details_{$ms_index}" name="mis_details_{$ms_index}" value="1">-->
+												{/if}*}
+											{/if}						
+											
+										</tr>
+
+										{if $mission.identifier|in_array:$quote_missions.tech.linked_to_prod}
+										{assign var=keys value=$quote_missions.tech.linked_to_prod|@array_search|@array_pop}
+
+										{foreach from=$quote_missions.tech.linked_to_prod item=tmission name="tmission"}
+											{if $mission.identifier eq $tmission}
+											{assign var=tn_index value=$smarty.foreach.tmission.index}	
+											<tr id="tmid_{$quote_missions.tech.$tn_index.identifier}" class="prod-link-mission">
+												<td class="mt" colspan="5">
+													<a {if $sales_review neq 'signed'} data-toggle="modal" data-target="#viewmission" href="/quote-new/create-quote-mission-details-popup?quote_id={$smarty.get.quote_id}&t_index={$quote_missions.tech.$tn_index.identifier}" {/if}>
+													{$quote_missions.tech.$tn_index.tech_type}
+														<p class="grey-text" style="font-size:12px;"><span class="glyphicon glyphicon-align-justify"></span>  <span id="mission_volume_{$quote_missions.tech.$tn_index.identifier}" style="padding-right:20px;"> {$quote_missions.tech.$tn_index.volume}       </span>             {$quote_missions.tech.$tn_index.language} </p>
+													</a>
+												
+												</td>
+											
+												<td class="col-xs-2 text-center margin-col-calc" {if ($user_type eq 'superadmin'  || $user_type eq 'salesmanager' || $user_type eq 'salesuser') && $sales_review neq 'signed'} data-toggle="modal" data-target="#editarticleprice" {/if} onClick="loadeditarticle({$quote_missions.tech.$tn_index.identifier},'')">
+												<span id="article_price_{$quote_missions.tech.$tn_index.identifier}">{$quote_missions.tech.$tn_index.unit_price|zero_cut:2}</span><sup>&{$create_step1.currency};</sup><p class="grey-text">SELLING PRICE</p>
+												<div class="epmargin label label-info" id="epmargin_{$quote_missions.tech.$tn_index.identifier}">{$quote_missions.tech.$tn_index.margin_percentage}%</div>
+												<input type="hidden" value="{$quote_missions.tech.$tn_index.margin_percentage}" id="margin_percentage_{$quote_missions.tech.$tn_index.identifier}" name="margin_percentage_{$quote_missions.tech.$tn_index.identifier}">
+												<input type="hidden" value="{$quote_missions.tech.$tn_index.unit_price}" id="unit_price_{$quote_missions.tech.$tn_index.identifier}" name="unit_price_{$quote_missions.tech.$tn_index.identifier}">
+												<input type="hidden" value="{$quote_missions.tech.$tn_index.internal_cost}" id="internal_cost_{$quote_missions.tech.$tn_index.identifier}" name="internal_cost_{$quote_missions.tech.$tn_index.identifier}">
+												</td>
+												<td class="col-xs-1 text-right brand-success">
+													<span id="price_info_{$quote_missions.tech.$tn_index.identifier}">{$quote_missions.tech.$tn_index.turnover|zero_cut:2}</span>&{$create_step1.currency};
+												</td>
+											</tr>
+											{/if}
+											{/foreach}
+											{/if}
+											{/if}
+									{/foreach}	
+										
+										
+										{foreach from=$quote_missions.tech.linked_to_prod item=tmission name="tmission"}
+											{assign var=tn_index value=$smarty.foreach.tmission.index}	
+											{if $quote_missions.tech.linked_to_prod.$tn_index eq ""  && $quote_missions.tech.linked_to_prod neq 'all_prod'}
+												<tr id="tmid_{$quote_missions.tech.$tn_index.identifier}">
+										<td class="mt" colspan="5">
+											<a {if $sales_review neq 'signed'} data-toggle="modal" data-target="#viewmission" href="/quote-new/create-quote-mission-details-popup?quote_id={$smarty.get.quote_id}&t_index={$quote_missions.tech.$tn_index.identifier}" {/if}>
+											{$quote_missions.tech.$tn_index.tech_type}
+												<p class="grey-text" style="font-size:12px;"> <span class="glyphicon glyphicon-align-justify"></span><span id="mission_volume_{$quote_missions.tech.$tn_index.identifier}" style="padding-right:20px;"> {$quote_missions.tech.$tn_index.volume}          </span>         {$quote_missions.tech.$tn_index.language}</p>
+											</a>
+												
+											</td>
+											
+											<td class="text-center margin-col-calc" {if ($user_type eq 'superadmin'  || $user_type eq 'salesmanager' || $user_type eq 'salesuser') && $sales_review neq 'signed'} data-toggle="modal" data-target="#editarticleprice" {/if} onClick="loadeditarticle({$quote_missions.tech.$tn_index.identifier},'')">
+												<span id="article_price_{$quote_missions.tech.$tn_index.identifier}">{$quote_missions.tech.$tn_index.unit_price|zero_cut:2}</span>&{$create_step1.currency};<p class="grey-text">SELLING PRICE</p>
+												<div class="epmargin label label-info" id="epmargin_{$quote_missions.tech.$tn_index.identifier}">{$quote_missions.tech.$tn_index.margin_percentage}%</div>
+												<input type="hidden" value="{$quote_missions.tech.$tn_index.margin_percentage}" id="margin_percentage_{$quote_missions.tech.$tn_index.identifier}" name="margin_percentage_{$quote_missions.tech.$tn_index.identifier}">
+												<input type="hidden" value="{$quote_missions.tech.$tn_index.unit_price}" id="unit_price_{$quote_missions.tech.$tn_index.identifier}" name="unit_price_{$quote_missions.tech.$tn_index.identifier}">
+												<input type="hidden" value="{$quote_missions.tech.$tn_index.internal_cost}" id="internal_cost_{$quote_missions.tech.$tn_index.identifier}" name="internal_cost_{$quote_missions.tech.$tn_index.identifier}">
+												</td>
+												<td class="text-center brand-success">
+													<span id="price_info_{$quote_missions.tech.$tn_index.identifier}">{$quote_missions.tech.$tn_index.turnover|zero_cut:2}</span>&{$create_step1.currency};
+												</td>
+											</tr>
+										{/if}
+											{/foreach}
+										{foreach from=$quote_missions.tech.linked_to_prod item=tmission name="tmission"}
+											
+											{assign var=tn_index value=$smarty.foreach.tmission.index}	
+											{if $tmission eq 'all_prod' && $quote_missions.tech.$tn_index.to_perform neq 'Before'}
+											<tr id="tmid_{$quote_missions.tech.$tn_index.identifier}" class="prod-link-mission">
+												<td class="mt" colspan="5">
+													<a {if $sales_review neq 'signed'} data-toggle="modal" data-target="#viewmission" href="/quote-new/create-quote-mission-details-popup?quote_id={$smarty.get.quote_id}&t_index={$quote_missions.tech.$tn_index.identifier}" {/if}>
+													{$quote_missions.tech.$tn_index.tech_type}
+														<p class="grey-text" style="font-size:12px;"><span class="glyphicon glyphicon-align-justify"></span>  <span id="mission_volume_{$quote_missions.tech.$tn_index.identifier}" style="padding-right:20px;"> {$quote_missions.tech.$tn_index.volume}       </span>             {$quote_missions.tech.$tn_index.language} </p>
+													</a>
+												
+												</td>
+										
+												<td class="col-xs-2 text-center margin-col-calc" {if ($user_type eq 'superadmin'  || $user_type eq 'salesmanager' || $user_type eq 'salesuser') && $sales_review neq 'signed'} data-toggle="modal" data-target="#editarticleprice" {/if} onClick="loadeditarticle({$quote_missions.tech.$tn_index.identifier},'')">
+												<span id="article_price_{$quote_missions.tech.$tn_index.identifier}">{$quote_missions.tech.$tn_index.unit_price|zero_cut:2}</span>&{$create_step1.currency};<p class="grey-text">SELLING PRICE</p>
+												<div class="epmargin label label-info" id="epmargin_{$quote_missions.tech.$tn_index.identifier}">{$quote_missions.tech.$tn_index.margin_percentage}%</div>
+												<input type="hidden" value="{$quote_missions.tech.$tn_index.margin_percentage}" id="margin_percentage_{$quote_missions.tech.$tn_index.identifier}" name="margin_percentage_{$quote_missions.tech.$tn_index.identifier}">
+												<input type="hidden" value="{$quote_missions.tech.$tn_index.unit_price}" id="unit_price_{$quote_missions.tech.$tn_index.identifier}" name="unit_price_{$quote_missions.tech.$tn_index.identifier}">
+												<input type="hidden" value="{$quote_missions.tech.$tn_index.internal_cost}" id="internal_cost_{$quote_missions.tech.$tn_index.identifier}" name="internal_cost_{$quote_missions.tech.$tn_index.identifier}">
+												</td>
+												<td class="col-xs-1 text-right brand-success">
+													<span id="price_info_{$quote_missions.tech.$tn_index.identifier}">{$quote_missions.tech.$tn_index.turnover|zero_cut:2}</span>&{$create_step1.currency};
+												</td>
+											</tr>
+											{/if}
+											{/foreach}
+									
+								</table>
+							</div></div></div>
+							{/if}				
+				
+				</form>

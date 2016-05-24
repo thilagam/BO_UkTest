@@ -1,0 +1,493 @@
+			{if $quote_list|@count>0 && $smarty.get.sales_review eq 'briefing'}
+			
+				{foreach from=$quote_list item=bquote_item name=bquote_loop}
+					{if $bquote_item.sales_review eq 'briefing'}
+						<!-- card, start -->
+						<div class="card" id="quote-{$bquote_item.identifier}">
+							<div class="content">
+								<div class="card-header">  
+									<img src="{$fo_path}profiles/clients/logos/{$bquote_item.client_id}/{$bquote_item.client_id}_global.png?f=12345" class="brand_l">
+									<span class="ps" data-toggle="tooltip" data-placement="bottom" title="Estimation of signature">{$bquote_item.estimate_sign_percentage}%</span>
+									<div class="dropdown clearfix">
+										<a href="#" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+											<b class="caret"></b>
+										</a>
+										<ul class="dropdown-menu dropdown-menu-right">
+											<li><a href="/quote-new/client-brief?qaction=briefing&quote_id={$bquote_item.identifier}">Editer</a></li>
+											<li class="divider"></li>
+											{if $user_type=='superadmin'}
+												<li>
+													<a href="javascript:void(0);"class="delete-quote" data-id="{$bquote_item.identifier}">Delete</a>
+												</li>
+											{/if}
+										</ul>
+									</div> 
+								</div>
+								<a href="/quote-new/client-brief?qaction=briefing&quote_id={$bquote_item.identifier}" class="qt">{$bquote_item.title|utf8_encode}</a>
+								<div class="qf clearfix">
+									<ul class="list-inline text-muted">
+										<li>{$bquote_item.created_at|date_format:"%d/%m/%Y"}</li>
+										<li>v{$bquote_item.version}</li>
+									</ul>
+									<div class="owner"><img src="{$fo_path}profiles/bo/{$bquote_item.quote_by}/logo.jpg?123"  data-toggle="tooltip" data-placement="left" title="{$bquote_item.owner|utf8_encode}"></div>
+								</div>
+							</div>                    
+						</div>
+						<!-- card, stop -->				
+					{/if}			
+				{/foreach}
+				
+			{/if}			
+			
+
+
+
+{if $quote_list|@count>0 && $smarty.get.sales_review eq 'ongoing'}		
+						
+				{foreach from=$quote_list item=quote_item name=oquote_loop}
+					{if $quote_item.sales_review eq 'not_done' || $quote_item.sales_review eq 'challenged' || $quote_item.sales_review eq 'to_be_approve'}						<!-- card, start ($user_type == 'superadmin' || $user_type =='salesuser' || $user_type =='salesmanager' || $user_type =='ceouser' || $user_type =='facturation')) -->
+						<div class="card" id="quote-{$quote_item.identifier}">
+							<div class="content">
+								 <div class="card-header"> 
+									<img src="{$fo_path}profiles/clients/logos/{$quote_item.client_id}/{$quote_item.client_id}_global.png?f=12345" class="brand_l">
+									<span class="ps" data-toggle="tooltip" data-placement="bottom" title="Estimation of signature">{$quote_item.estimate_sign_percentage}%</span>
+									<div class="dropdown clearfix">
+										<a href="#" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+											<b class="caret"></b>
+										</a>
+										<ul class="dropdown-menu dropdown-menu-right">
+											{if $user_type == 'superadmin' || $user_type =='salesuser' || $user_type =='salesmanager' || $user_type =='ceouser' || $user_type =='facturation'}
+												{if $quote_item.sales_review eq 'to_be_approve'}
+													{if $user_type =='salesuser'}
+														{* <!--Pour &ecirc;tre valid&eacute; par le gestionnaire -->*}
+														<li>En attente de validation -Head of sales</li>
+													{else}
+														<li><a href="/quote-new/create-step1?qaction=edit&quote_id={$quote_item.identifier}" tabindex="-1" role="menuitem"><i class="splashy-okay"></i> Accepter</a></li>
+													{/if}
+												{else}		
+													<li>
+														<a class="check_quote_edit" href="/quote-new/create-step1?qaction=edit&quote_id={$quote_item.identifier}">Editer</a>
+													</li>
+													<li>
+														<a href="/quote-new/create-step1?qaction=duplicate&quote_id={$quote_item.identifier}" tabindex="-1" role="menuitem"><i class="splashy-document_copy"></i> Dupliquer</a>
+													</li>
+													{if $quote_item.prod_review eq 'auto_skipped'|| $quote_item.prod_review eq 'skipped' || $quote_item.prod_review eq 'validated'}
+														<li>
+															<a href="/quote-new/sales-final-validation?qaction=briefing&quote_id={$quote_item.identifier}">Valider</a>
+														</li>								
+													{/if}
+													{if $user_type=='superadmin'}
+														<li class="divider"></li>
+														<li>
+															<a href="javascript:void(0);"class="delete-quote" data-id="{$quote_item.identifier}">Delete</a>
+														</li>	
+													{/if}	
+												{/if}	
+											{elseif $user_type == 'seouser' || $user_type =='seomanager'}
+												<li>
+													<a class="check_quote_edit" href="/quote-new/create-step1?qaction=edit&quote_id={$quote_item.identifier}">Edit</a>
+												</li>
+												
+											{elseif $user_type == 'techuser' || $user_type =='techmanager'}
+												<li>
+													<a class="check_quote_edit" href="/quote-new/create-step1?qaction=edit&quote_id={$quote_item.identifier}">Edit</a>
+												</li>	
+											{elseif $user_type == 'produser' || $user_type =='multilingue' || $user_type =='prodsubmanager' || $user_type =='prodmanager'}
+												<li>
+													<a class="check_quote_edit" href="/quote-new/create-step1?qaction=edit&quote_id={$quote_item.identifier}">Edit</a>
+												</li>
+											{/if}
+										</ul>
+									</div>
+								</div>
+								{if $quote_item.prod_review eq 'auto_skipped'|| $quote_item.prod_review eq 'skipped' || $quote_item.prod_review eq 'validated'}
+									<a href="/quote-new/sales-final-validation?qaction=briefing&quote_id={$quote_item.identifier}">
+								{else}	
+									<a href="/quote-new/client-brief?qaction=briefing&quote_id={$quote_item.identifier}">
+								{/if}
+								
+									<div class="qp">
+										{if $quote_item.turnover > 0}
+											{$quote_item.turnover|zero_cut_t:2} &{$quote_item.sales_suggested_currency};
+										{else}
+											-
+										{/if}
+									</div>		
+									<div class="qt">{$quote_item.title|utf8_encode}</div>
+								</a>
+								<div class="qf clearfix">
+									<ul class="list-inline text-muted">
+										
+										{if ($quote_item.prod_review eq 'auto_skipped'|| $quote_item.prod_review eq 'skipped' || $quote_item.prod_review eq 'validated') && ($quote_item.sales_review neq 'validated' && $quote_item.sales_review neq 'closed' && $quote_item.sales_review neq 'briefing')}
+											<li>
+												{if $smarty.now lt $quote_item.sales_validation_expires}
+													<span class="label label-success" data-html="true" data-trigger="hover" data-toggle="popover" data-placement="top" data-content="Quote is ready to be validated by sales <span id='time_{$quote_item.identifier}_{$quote_item.sales_validation_expires}'>
+																	 <span id='text_{$quote_item.identifier}_{$quote_item.sales_validation_expires}'></span>
+																</span>">Ready
+													</span>
+												{else}
+													<span class="label label-warning" data-html="true" data-trigger="hover" data-toggle="popover" data-placement="top" data-content="Quote is ready to be validated by sales <br> En retard : <span id='time_{$quote_item.identifier}_{$quote_item.sales_validation_expires}' class='enretard'>
+																 <span id='text_{$quote_item.identifier}_{$quote_item.sales_validation_expires}'></span>
+															</span>">Ready
+													</span>
+												{/if}
+											</li>
+										
+										{/if}										
+										<li>{$quote_item.created_at|date_format:"%d/%m/%Y"}</li>
+										<li>v{$quote_item.version}</li>
+									</ul>
+								   <div class="owner"><img src="{$fo_path}profiles/bo/{$quote_item.quote_by}/logo.jpg?123"  data-toggle="tooltip" data-placement="left" title="{$quote_item.owner|utf8_encode}"></div>
+								</div>
+							</div>                    
+						</div>
+					<!-- card, stop -->
+					{/if}
+				{/foreach}	
+			{/if}		
+
+
+
+
+
+{if $quote_list|@count>0 &&  $smarty.get.sales_review eq 'validated'}
+				{foreach from=$quote_list item=vquote_item name=vquote_loop}
+					{if $vquote_item.validated_status eq '1'}
+						<!-- card, start -->
+						<div class="card" id="quote-{$vquote_item.identifier}">
+							<div class="content">
+								<div class="card-header">  
+									<img src="{$fo_path}profiles/clients/logos/{$vquote_item.client_id}/{$vquote_item.client_id}_global.png?f=12345" class="brand_l">
+									<span class="ps" data-toggle="tooltip" data-placement="bottom" title="Estimation of signature">{$vquote_item.estimate_sign_percentage}%</span>
+									<div class="dropdown clearfix">
+										<a href="#" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+											<b class="caret"></b>
+										</a>
+										<ul class="dropdown-menu dropdown-menu-right">
+											{if $user_type == 'superadmin' || $user_type =='salesuser' || $user_type =='salesmanager' || $user_type =='ceouser' || $user_type =='facturation'}
+												<li>
+													<a class="newversion" href="/quote-new/create-step1?qaction=edit&quote_id={$vquote_item.identifier}">  Modifier mission</a>
+												</li>
+												<li>
+													<a href="/quote-new/sales-final-validation?qaction=briefing&quote_id={$vquote_item.identifier}"> Modifier la marge</a>
+												</li>
+												<li class="divider"></li>
+												<li>
+													<a href="/quote-new/close-quote-view?qid={$vquote_item.identifier}" data-toggle="modal" data-target="#close_quote" class="closequote">Close</a>
+												</li>
+												<li>
+													<a data-toggle="modal"  data-target="#sign_quote" href="/quote-new/sign-quote-view?qid={$vquote_item.identifier}"  class="signquote">Sign</a>
+												</li>
+												{if $user_type=='superadmin'}
+													<li>
+														<a href="javascript:void(0);"class="delete-quote" data-id="{$vquote_item.identifier}">Delete</a>
+													</li>
+												{/if}	
+												<li>
+													<a href="/quote-new/download-quote-xls?currency={$vquote_item.sales_suggested_currency}&quote_id={$vquote_item.identifier}" >Download XLSX</a>
+												</li>
+											{else}	
+												<li>
+													<a href="/quote-new/download-quote-xls?currency={$vquote_item.sales_suggested_currency}&quote_id={$vquote_item.identifier}" >Download XLSX</a>
+												</li>
+											{/if}	
+										</ul>
+									</div> 
+								</div>
+								<a data-toggle="modal"  data-target="#sign_quote" href="/quote-new/sign-quote-view?qid={$vquote_item.identifier}"  class="signquote">
+									<div class="qp">
+										{if $vquote_item.turnover > 0}
+											{$vquote_item.turnover|zero_cut_t:2} &{$vquote_item.sales_suggested_currency};
+										{else}
+											-
+										{/if}
+									</div>		
+									<div class="qt">{$vquote_item.title|utf8_encode}</div>
+								</a>
+								<div class="qf clearfix">
+									<ul class="list-inline text-muted">
+										<li>
+											<span class="label label-info" data-html="true" data-trigger="hover" data-toggle="popover" data-placement="top" data-content=" Quote will be considered as relance in : <span id='time_{$vquote_item.identifier}_{$vquote_item.sign_expire_timeline}' >
+											<span id='text_{$vquote_item.identifier}_{$vquote_item.sign_expire_timeline}'></span>
+										</span>">Relance
+											</span>
+										</li>
+										
+										<li>{$vquote_item.updated_at|date_format:"%d/%m/%Y"}</li>
+										<li>v{$vquote_item.version}</li>
+									</ul>
+									<div class="owner"><img src="{$fo_path}profiles/bo/{$vquote_item.quote_by}/logo.jpg?123"  data-toggle="tooltip" data-placement="left" title="{$vquote_item.owner|utf8_encode}"></div>
+								</div>
+							</div>                    
+						</div>
+						<!-- card, stop -->				
+					{/if}			
+				{/foreach}
+			{/if}
+
+
+{if $quote_list|@count>0 && $smarty.get.sales_review eq 'signed'}
+				{foreach from=$quote_list item=squote_item name=squote_loop}
+					{if $squote_item.sales_review eq 'signed'}
+						<!-- card, start-->
+						<div class="card">
+							<div class="content">
+								<div class="card-header"> 
+									<img src="{$fo_path}profiles/clients/logos/{$squote_item.client_id}/{$squote_item.client_id}_global.png?f=12345" class="brand_l">
+									<span class="ps" data-toggle="tooltip" data-placement="bottom" title="Estimation of signature">{$squote_item.estimate_sign_percentage}%</span>									
+									<div class="dropdown clearfix">
+										<a href="#" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+												<b class="caret"></b>
+										</a>
+										<ul class="dropdown-menu dropdown-menu-right">
+											{if $user_type == 'superadmin' || $user_type =='salesuser' || $user_type =='salesmanager' || $user_type =='ceouser' || $user_type =='facturation'}
+												<li>
+													{if $squote_item.signed_exist eq '1'}
+														<a href="/contractmission/contract-edit?contract_id={$squote_item.signed_contractid}">View contract</a>
+													{else}
+														<a href="/contractmission/create-contract?quote_id={$squote_item.identifier}">Create the contract</a>												
+													{/if}
+												</li>
+											{/if}
+											<li>
+												<a href="/quote-new/download-quote-xls?currency={$squote_item.sales_suggested_currency}&quote_id={$squote_item.identifier}">Download XLSX</a>
+											</li>
+											<li class="divider"></li>
+											{if $user_type=='superadmin'}
+												<li>
+													<a href="javascript:void(0);"class="delete-quote" data-id="{$squote_item.identifier}">Delete</a>
+												</li>
+											{/if}
+										</ul>
+									</div>
+								</div>
+						
+								<a href="/quote-new/sales-final-validation?qaction=briefing&quote_id={$squote_item.identifier}">									
+									<div class="qp">
+										{if $squote_item.turnover > 0}
+											{$squote_item.turnover|zero_cut_t:2} &{$squote_item.sales_suggested_currency};
+										{/if}
+									</div>		
+									<div class="qt">{$squote_item.title|utf8_encode}</div>
+								</a>
+
+								<div class="qf clearfix">
+									<ul class="list-inline text-muted">
+										<li>
+											{if $squote_item.signed_exist eq '1'}
+												<span class="label label-info" data-html="true" data-trigger="hover"  data-toggle="popover" data-placement="top" data-content="{$squote_item.signed_contract}">Contract created</span>
+											{else}	
+												<span class="label label-danger" data-html="true" data-trigger="hover" data-toggle="popover" data-placement="top" data-content="Pending contract creation">Contract to create</span>
+											{/if}
+										</li>
+										<li>{$squote_item.signed_at|date_format:"%d/%m/%Y"}</li><li>v{$squote_item.version}</li>
+									</ul>
+								  <div class="owner"><img src="{$fo_path}profiles/bo/{$squote_item.quote_by}/logo.jpg?123"  data-toggle="tooltip" data-placement="left" title="{$squote_item.owner|utf8_encode}"></div>
+								</div>
+							</div>                    
+						</div>
+					<!-- card, stop -->	
+					
+					{/if}
+				{/foreach}	
+			{/if}
+
+
+{if $quote_list|@count>0 && $smarty.get.sales_review eq 'closed'}
+				{foreach from=$quote_list item=cquote_item name=cquote_loop}
+					{if $cquote_item.closed_status eq '1'}
+						<!-- card, start-->
+						<div class="card">
+							<div class="content">
+								<div class="card-header"> 
+									<img src="{$fo_path}profiles/clients/logos/{$cquote_item.client_id}/{$cquote_item.client_id}_global.png?f=12345" class="brand_l">	
+									<span class="ps" data-toggle="tooltip" data-placement="bottom" title="Estimation of signature">{$cquote_item.estimate_sign_percentage}%</span>										
+									<div class="dropdown clearfix">
+										<a href="#" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+												<b class="caret"></b>
+										</a>
+										<ul class="dropdown-menu dropdown-menu-right">											
+											{if $user_type == 'superadmin' || $user_type =='salesuser' || $user_type =='salesmanager' || $user_type =='ceouser' || $user_type =='facturation'}
+												<li>
+													<a href="/quote-new/relance-quote-popup?qid={$cquote_item.identifier}"data-toggle="modal" data-target="#programmer-relance">Schedule reminder</a>
+												</li>
+												<li>
+													<a href="/quote-new/close-relance-view?qid={$cquote_item.identifier}" data-content="{$cquote_item.closed_comments}" data-toggle="modal"  data-target="#close_quote" class="closequote" >Select reason</a>
+												</li>
+												<li>
+													<a class="newversion" href="/quote-new/create-step1?qaction=edit&quote_id={$cquote_item.identifier}">Reactivate Quote</a>
+												</li>
+												<li>
+													<a href="/quote-new/edit-quote-final-step?quote_id={$cquote_item.identifier}"  data-toggle="modal" data-target="#edit_quote_files"> Add informations</a>
+												</li>
+												<li class="divider"></li>												
+											{/if}
+											
+											<li>
+												<a href="/quote-new/download-quote-xls?currency={$cquote_item.sales_suggested_currency}&quote_id={$cquote_item.identifier}">Download XLSX</a>
+											</li>											
+											{if $user_type=='superadmin'}
+												<li>
+													<a href="javascript:void(0);"class="delete-quote" data-id="{$cquote_item.identifier}">Delete</a>
+												</li>
+											{/if}
+										</ul>
+									</div>
+								</div>
+						
+								<a class="newversion" href="/quote-new/create-step1?qaction=edit&quote_id={$cquote_item.identifier}">
+									<div class="qp">
+										{if $cquote_item.turnover > 0}
+											{$cquote_item.turnover|zero_cut_t:2} &{$cquote_item.sales_suggested_currency};
+										{/if}
+									</div>		
+									<div class="qt">{$cquote_item.title|utf8_encode}</div>
+								</a>
+
+								<div class="qf clearfix">
+									<ul class="list-inline text-muted">
+										{if $cquote_item.closed_comments}
+										<li>
+											<span class="label label-info" data-content="{if $cquote_item.boot_customer}{$cquote_item.boot_customer|date_format:'%d/%m/%Y'} - {/if} {$closedreasons[$cquote_item.closed_reason]} - {$cquote_item.closed_comments}"  data-html="true" data-trigger="hover" data-placement="top" data-toggle="popover">
+												{$closedreasons[$cquote_item.closed_reason]}
+											</span>
+										</li>
+										{/if}
+										<li>{$cquote_item.updated_at|date_format:"%d/%m/%Y"}</li><li>v{$cquote_item.version}</li>
+									</ul>
+								  <div class="owner"><img src="{$fo_path}profiles/bo/{$cquote_item.quote_by}/logo.jpg?123"  data-toggle="tooltip" data-placement="left" title="{$cquote_item.owner|utf8_encode}"></div>
+								</div>
+							</div>                    
+						</div>
+					<!-- card, stop -->	
+					
+					{/if}
+				{/foreach}	
+			{/if}
+
+
+{if $quote_list|@count>0 && $smarty.get.sales_review eq 'relance'}
+				{foreach from=$quote_list item=rquote_item name=rquote_loop}
+					{if $rquote_item.relancer_status eq '1'}
+						<!-- card, start-->
+						<div class="card">
+							<div class="content">
+								<div class="card-header"> 
+									<img src="{$fo_path}profiles/clients/logos/{$rquote_item.client_id}/{$rquote_item.client_id}_global.png?f=12345" class="brand_l">	
+									<span class="ps" data-toggle="tooltip" data-placement="bottom" title="Estimation of signature">{$rquote_item.estimate_sign_percentage}%</span>										
+									<div class="dropdown clearfix">
+										<a href="#" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+												<b class="caret"></b>
+										</a>
+										<ul class="dropdown-menu dropdown-menu-right">											
+											{if $user_type == 'superadmin' || $user_type =='salesuser' || $user_type =='salesmanager' || $user_type =='ceouser' || $user_type =='facturation'}
+												<li>
+													<a href="/quote-new/relance-quote-popup?qid={$rquote_item.identifier}"data-toggle="modal" data-target="#programmer-relance">Schedule reminder</a>
+												</li>
+												<li>
+													<a href="/quote-new/close-relance-view?qid={$rquote_item.identifier}" data-content="{$rquote_item.closed_comments}" data-toggle="modal"  data-target="#close_quote" class="closequote" >Select reason</a>
+												</li>
+												<li>
+													<a class="newversion" href="/quote-new/create-step1?qaction=edit&quote_id={$rquote_item.identifier}">Reactivate Quote</a>
+												</li>
+												<li>
+													<a href="/quote-new/edit-quote-final-step?quote_id={$rquote_item.identifier}"  data-toggle="modal" data-target="#edit_quote_files"> Add informations</a>
+												</li>
+												<li class="divider"></li>
+												<li>
+													<a href="/quote-new/close-relance-view?qid={$rquote_item.identifier}&closed_type=perdu" data-toggle="modal" data-target="#close_quote" class="closequote"> Close</a>
+												</li>
+											{/if}
+											
+											<li>
+												<a href="/quote-new/download-quote-xls?currency={$rquote_item.sales_suggested_currency}&quote_id={$rquote_item.identifier}">Download XLSX</a>
+											</li>											
+											{if $user_type=='superadmin'}
+												<li>
+													<a href="javascript:void(0);"class="delete-quote" data-id="{$rquote_item.identifier}">Delete</a>
+												</li>
+											{/if}
+										</ul>
+									</div>
+								</div>
+						
+								<a class="newversion" href="/quote-new/create-step1?qaction=edit&quote_id={$rquote_item.identifier}">								
+									<div class="qp">
+										{if $rquote_item.turnover > 0}
+											{$rquote_item.turnover|zero_cut_t:2} &{$rquote_item.sales_suggested_currency};
+										{/if}
+									</div>		
+									<div class="qt">{$rquote_item.title|utf8_encode}</div>
+								</a>
+
+								<div class="qf clearfix">
+									<ul class="list-inline text-muted">
+										<li>
+											{if $rquote_item.boot_customer  && $rquote_item.relancer_commet!="" }
+											<span class="hidden">{$rquote_item.boot_customer|date_format:"%Y/%m/%d"}</span>
+											<span class="label label-info" data-content="{$rquote_item.boot_customer|date_format:'%d/%m/%Y'} - {if $rquote_item.closed_reason }{$closedreasons[$rquote_item.closed_reason]} - {/if}{$rquote_item.relancer_commet}"  data-html="true" data-trigger="hover" data-placement="top" data-toggle="popover">
+												{$rquote_item.boot_customer|date_format:"%d/%m/%Y"} relance
+											</span>
+										 {else}
+											<span class="label label-danger"data-html="true" data-trigger="hover" data-placement="top" data-content="Please, contact the client again" data-toggle="popover">To update</span>
+										 {/if}
+											
+										</li>
+										<li>{$rquote_item.updated_at|date_format:"%d/%m/%Y"}</li><li>v{$rquote_item.version}</li>
+									</ul>
+								  <div class="owner"><img src="{$fo_path}profiles/bo/{$rquote_item.quote_by}/logo.jpg?123"  data-toggle="tooltip" data-placement="left" title="{$rquote_item.owner|utf8_encode}"></div>
+								</div>
+							</div>                    
+						</div>
+					<!-- card, stop -->	
+					
+					{/if}
+				{/foreach}	
+			{/if}
+
+
+				{if $quote_list|@count>0 && $smarty.get.sales_review eq 'deleted' && $user_type eq 'superadmin'}
+					{foreach from=$quote_list item=dquote_item name=dquote_loop}
+						{if $dquote_item.sales_review eq 'deleted'}
+							<!-- card, start -->
+							<div class="card" id="quote-{$dquote_item.identifier}">
+								<div class="content">
+									<div class="card-header">  
+										<img src="{$fo_path}profiles/clients/logos/{$dquote_item.client_id}/{$dquote_item.client_id}_global.png?f=12345" class="brand_l">
+										<span class="ps" data-toggle="tooltip" data-placement="bottom" title="Estimation of signature">{$dquote_item.estimate_sign_percentage}%</span>
+										<div class="dropdown clearfix">
+											<a href="#" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+												<b class="caret"></b>
+											</a>
+											{if $user_type=='superadmin'}
+												<ul class="dropdown-menu dropdown-menu-right">
+												
+													<li>
+														<a href="javascript:void(0);"class="delete-quote-permenent" data-id="{$dquote_item.identifier}">Delete</a>
+													</li>											
+												</ul>
+											{/if}	
+										</div> 
+									</div>
+									<a href="javascript:void(0);"class="delete-quote-permenent" data-id="{$dquote_item.identifier}">									
+										<div class="qp">
+											{if $dquote_item.turnover > 0}
+												{$dquote_item.turnover|zero_cut_t:2} &{$dquote_item.sales_suggested_currency};
+											{/if}
+										</div>		
+										<div class="qt">{$dquote_item.title|utf8_encode}</div>
+									</a>
+									<div class="qf clearfix">
+										<ul class="list-inline text-muted">
+											<li>{$dquote_item.deleted_at|date_format:"%d/%m/%Y"}</li>
+											<li>v{$dquote_item.version}</li>
+										</ul>
+										<div class="owner"><img src="{$fo_path}profiles/bo/{$dquote_item.quote_by}/logo.jpg?123"  data-toggle="tooltip" data-placement="left" title="{$dquote_item.owner|utf8_encode}"></div>
+									</div>
+								</div>                    
+							</div>
+							<!-- card, stop -->				
+						{/if}			
+					{/foreach}
+				{/if}
+

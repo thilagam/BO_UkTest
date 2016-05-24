@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>{$meta_title}</title>
+<meta name="keywords" content="{$meta_keywords}"/>
+<meta name="description" content="{$meta_description}"/>
+<meta name="rating" content="general"/>
+<meta name="language" content="{$lang}" />
+<meta http-equiv="Content-Type" content="text/html; charset={$make_iso}" />
+<link href="image/favicon/favicon.ico" rel="shortcut icon" />
+{foreach from=$cssList item=css}
+<link href="{$css}" type="text/css" rel="stylesheet" />
+{/foreach}
+{foreach from=$javascriptList item=javascript}
+<script language="JavaScript" type="text/javascript" src="{$javascript}"></script>
+{/foreach}
+<link rel="alternate" type="application/rss+xml" title="%rss_news%" href="{$livesite}/html/rss/{$lang}/rss.xml" />
+</head>
+
+<body class="body">
+
+	<div class="main">
+	
+		<div class="mainFrameAdmin">
+
+			<div class="centerFrame2">
+			{foreach from=$mainList item=frame}
+			{include file="$frame"}
+			{/foreach}
+			</div>
+			
+			<div class="footerFrame">
+			{foreach from=$footerList item=frame}
+			{include file="$frame"}
+			{/foreach}
+			</div>
+	
+			<div class="headerFrame">
+			{foreach from=$headerList item=frame}
+			{include file="$frame"}
+			{/foreach}
+			</div>
+		</div>
+	</div>
+
+<!--START WREPORT Oboulo-->
+<script language="javascript">
+var WRP_ID= '{$webo_id}'
+var WRP_SECTION= '{$webo_section}';
+var WRP_SUBSECTION= '{$webo_subsection}';
+var WRP_SECTION_GRP= WRP_ID;
+var WRP_SUBSECTION_GRP= WRP_SECTION;
+var WRP_CONTENT= '{$webo_content}';
+var WRP_CHANNEL= '{$webo_channel}';
+
+/* Profondeur Frame */
+var WRP_ACC = 0;
+</script>
+
+<script language="javascript" src="/script/wreport.js"></script>
+<script>
+var w_counter = new wreport_counter(WRP_SECTION, WRP_SUBSECTION, WRP_ID, WRP_ACC, WRP_CHANNEL, WRP_SECTION_GRP, WRP_SUBSECTION_GRP);
+w_counter.add_content(WRP_CONTENT);
+w_counter.count();
+</script>
+<!-- END WREPORT COPYRIGHT WEBORAMA--> 
+	
+</body>
+</html>

@@ -1,0 +1,23 @@
+{if $log_details|@count gt 0}		
+	{foreach from=$log_details item=log name="log"}
+		<li>
+			<div class="containerActivitiesPP">
+				<img class="img-responsive" src="{$fo_path}/profiles/bo/{$log.user_id}/logo.jpg" alt="Profil Picture">
+			</div>
+			<div class="containerActivitiesText">
+				{$log.action_sentence|utf8_encode}
+				{if $log.comments}
+					<p class="comment">{$log.comments|utf8_encode}</p>
+				{/if}	
+				<span class="containerActivitiesTime">
+				{$log.time_ago|utf8_encode}
+				</span>
+			</div>
+		</li>
+	{/foreach}	
+	<div id="load_more_{$next}" class="containerActivitiesReadMore more_tab">
+		<a class="btn btn-primary more_button" id="{$next}">Read more <i class="material-icons">keyboard_arrow_right</i></a>
+	</div>
+{else}	
+	<div class="containerActivitiesReadMore has-error"><label class="control-label">No More Activities to Load</label></span>
+{/if}	

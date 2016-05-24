@@ -1,0 +1,20 @@
+<?php /* Smarty version 2.6.19, created on 2016-03-14 13:24:50
+         compiled from gebo-new/common/left-menu.phtml */ ?>
+<div class="sidebar">   
+
+	<div class="sidebar-wrapper">
+		<ul class="nav">
+			<li>
+				<a href="#home"><i class="material-icons">dashboard</i><span>Dashboard</span></a>
+			</li>
+			<li><a href="/quote/clients-list?submenuId=ML13-SL6"><i class="material-icons">account_circle</i><span>Client</span></a></li>
+			<li class="active">                   
+				<a href="/quote-new/sales-quotes-list"><i class="material-icons">monetization_on</i><span>Quote</span></a>
+			</li>
+			<li><a href="/contractmission/contract-list?submenuId=ML13-SL3"><i class="material-icons">assignment</i><span>Contract</span></a></li>
+			<li><a href="/contractmission/missions-list?submenuId=ML13-SL4"><i class="material-icons">alarm</i><span>Mission</span></a></li>
+
+			
+		</ul>  
+	</div>
+</div>

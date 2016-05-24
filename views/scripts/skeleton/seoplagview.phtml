@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+    <head>
+        <title>{$meta_title}</title>
+        <meta name="keywords" content="{$meta_keywords}"/>
+        <meta name="description" content="{$meta_description}"/>
+        <meta name="rating" content="general"/>
+        <meta name="language" content="{$lang}" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link href="image/favicon/favicon.ico" rel="shortcut icon" />
+
+        {foreach from=$cssList item=css}
+            <link href="/BO/css/{$css}" type="text/css" rel="stylesheet" />
+        {/foreach}
+        
+        {literal}<style>mmm {background-color:#FFFF00;font-weight:bold;}</style>{/literal}  
+
+    </head>
+
+    <body style="background:none;">
+        <div style="float:left;border:1px solid #000;width:90%;padding:10px;color:#666;">
+            <div><b>Url</b> : {$pUrl}</div>{$pActualContent}
+            <div><b>Content</b> : {$pContent}</div>
+            <div><b>Plagiarism percentage</b> : {$pPercentage}</div>
+        </div>
+        <div style="float:left;">{$plagText}</div>        
+    </body>
+</html>

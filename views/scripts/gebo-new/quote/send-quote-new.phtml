@@ -1,0 +1,351 @@
+
+{literal}
+<link href="/BO/theme/gebo/css/jquery.datetimepicker.css" rel="stylesheet" />
+<link rel="stylesheet" href="/BO/theme/gebo/js/validation-engine/validationEngine.jquery.css" type="text/css"/>
+<script src="/BO/theme/gebo/js/jquery.datetimepicker.js" type="text/javascript" charset="utf-8"></script>
+<script src="/BO/theme/gebo/js/jquery.MultiFileQuote.js" type="text/javascript" charset="utf-8"></script>
+<script src="/BO/theme/gebo/js/validation-engine/jquery.validationEngine-en.js" type="text/javascript" charset="utf-8"></script>
+<script src="/BO/theme/gebo/js/validation-engine/jquery.validationEngine.js" type="text/javascript" charset="utf-8"></script>
+
+<style>
+	#additional{
+     background-color: #00BFFF;
+     color:#fff;
+	}
+	#additional input{
+		padding:5px;
+		margin: 5px;
+	}
+	#additional textarea
+	{
+		padding:5px;
+		margin: 5px;
+		color:#fff;
+		background-color:#3DA1D2;
+		border: 0 !important;
+		width:260px;
+		height: 100px
+	}
+	h1
+	{
+		font-weight: bold;
+	}
+	.form-label{
+		font-size: 15px;
+	}
+	.btn-validate
+	{
+		color:#00BFFF !important;
+	}
+	div.iradio_square-blue,.icheckbox_square-blue
+	{
+		margin:5px !important;
+		padding: 5px !important;
+	}
+	#agency_details ,#internal_team_details ,#client_aims_comments_div
+	{
+		display: none;
+	}
+	.chosen-container{
+		width:220px !important;
+	}
+	input, select{
+		color:#555 !important;
+	}
+	</style>
+{/literal}
+	
+	<div class="container" >
+		<form class="form-inline  MultiFile-intercepted" enctype="multipart/form-data" id="send-quote" method="POST" action="/quote-new/save-send-quote">
+			<div class="row" id="additional" >
+				<div class="col-md-12">
+					<div class="row text-center">
+						 <div class="modal-header" style="border-bottom:0px !important">
+			                     <h1 class="text-uppercase ">Precisions & additional informations</h1>
+			             </div>	
+					</div>	
+
+			<div class="col-md-offset-2 col-md-8">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="col-md-5 form-group">
+							 <label class="form-label" >Vos remarques globales sur ce devis </label>
+							 </div>	
+							<div class="col-md-7 form-group">
+							 <label class="form-label" >Copiez-collez les &#234;changes de mails avec le client </label>
+							</div>
+							 
+						</div>
+						<div class="col-md-12 pull-left">
+							<div class="col-md-5">
+								<div class="form-group">
+								 <textarea class="form-control input-medium validate[required]" name="bo_comments" id="bo_comments" placeholder="We are gonna make some much money from this guy !" ></textarea>
+								 </div>
+							</div>
+							<div class="col-md-7">
+								<div class="form-group">	
+								 <textarea class="form-control input-medium validate[required] " id="client_email" name="client_email"></textarea>
+							 	</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-12 form-group ">
+								<label class="form-label" for="quote_documents">Fichiers joints <span class="help-block" style="display:inline-block">doc,xls,zip,.dot, .html .pdf  .jpg .png, .xml</span></label>
+						</div>	
+
+						<div class="col-md-12 form-group">
+								<div class="form-group">	
+											<div id="upload_wrap" class="MultiFile-wrap">
+												<input type="file" accept="doc|xls|zip|docx|xlsx" class="multi" id="upload" name="quote_documents[]" value="">
+												
+										<div class="onsuccessrep">
+										</div>
+								</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-12 form-group ">
+							<label class="form-label">Besoin(s) du client</label>
+						</div>
+							<div class="form-group">
+								<span class="col-md-12">
+									<span class="col-md-4"><input type="checkbox" class="validate[minCheckbox[1]] icheck-set" id="aim_1" name="client_aims[]"  value="seo"> SEO</span>										
+									<span id="div_priority_seo" style="display:none" class="col-md-8">
+										<label  class="control-label">Prio :</label>
+										<select name="priority_seo" id="priority_seo" class="priority">					
+												<option value="1" >1</option>
+												<option value="2" >2</option>
+												<option value="3">3</option>
+										</select>
+									</span>
+								</span>									
+								<span class="col-md-12 form-group">
+									<span class="col-md-4"><input type="checkbox" class="validate[minCheckbox[1]] icheck-set" id="aim_2" name="client_aims[]"  value="social"> Social</span>									
+									<span id="div_priority_social" style="display:none" class="col-md-8">
+										<label  class="control-label">Prio :</label>
+										<select name="priority_social" id="priority_social" class="priority">					
+												<option value="1">1</option>
+												<option value="2">2</option>
+												<option value="3">3</option>
+										</select>
+									</span>
+								</span>									
+								<span class="col-md-12 form-group">
+									<span class="col-md-4"><input type="checkbox" class="validate[minCheckbox[1]] icheck-set" id="aim_3" name="client_aims[]" value="conversion"> Conversion</span>
+
+									<span id="div_priority_conversion" style="display:none" class="col-md-8">
+										<label  class="control-label">Prio :</label>
+										<select name="priority_conversion" id="priority_conversion" class="priority">					
+												<option value="1" >1</option>
+												<option value="2" >2</option>
+												<option value="3" >3</option>
+										</select>
+									</span>	
+								</span>									
+								<span class="col-md-12 form-group">
+									<span class="col-md-4"><input type="checkbox" class="validate[minCheckbox[1]] icheck-set" id="aim_4" name="client_aims[]"  value="autre"> Autre</span>
+								</span>
+							</div>
+						</div>
+						<div class="row" id="client_aims_comments_div">
+								<div class="col-md-12 form-group">
+									<textarea placeholder="comments..." name="client_aims_comments" id="client_aims_comments" class="form-control" style="width:100%;"></textarea>
+								</div>
+						</div>
+
+					<div class="row pull-left">
+						<div class="col-md-12 form-group ">
+								 <label class="form-label " >Projet urgent ?</label>
+						</div>	
+						<div class="col-md-12 form-group">
+							<input type="radio" class="validate[required] icheck-set"  name="urgent"  value="yes">Oui&nbsp;
+								<input type="radio" class="validate[required] icheck-set" name="urgent"  value="no">Non
+						</div>	
+
+					</div>
+					<div class="row pull-left">
+						<div class="col-md-12 form-group ">
+								 <label class="form-label " >Le client a-t-il command&#234; du contenu dans une autre agence ? </label>
+						</div>	
+						<div class="col-md-12 form-group">
+							<input type="radio" id='content_ordered_agency' class="validate[required] icheck-set"  name="content_ordered_agency"  value="yes">Oui&nbsp;
+								<input type="radio" id='content_ordered_agency' class="validate[required] icheck-set" name="content_ordered_agency"  value="no">Non
+						</div>	
+
+					</div>
+
+					<div class="row pull-left" id="agency_details">
+					    <div class="col-md-12 form-group ">
+							<label class="form-label">Nom de l'agence ?</label>
+						</div>
+						<div class="col-md-12 form-group ">
+								<div class="col-md-7">
+										<label class="checkbox inline">
+											<input type="checkbox" id="agency" class="icheck-set form-control" name="agency"  value="dont_know">Je ne sais pas
+										</label>
+									</div>	
+									<div class="col-md-5" id="agency_name_div"  >
+										<input type="text" class="validate[required] form-control icheck-set" id="agency_name" value="" name="agency_name">
+									</div>
+								</div>
+						</div>
+						<div class="row pull-left" id="internal_team_details">
+							<div class="col-md-12 form-group ">
+								<label class="form-label">Le  client a-t-il une &eacute;quipe interne pour son contenu ?</label>
+							</div>
+							<div class="col-md-12 form-group ">
+								<div class="form-group">
+									<input type="radio" class="validate[required] icheck-set" name="client_internal_team"  value="yes">Oui&nbsp;
+									<input type="radio" class="validate[required] icheck-set" name="client_internal_team"  value="no">Non
+									<input type="radio" class="validate[required] icheck-set" name="client_internal_team"  value="dont_know">Je ne sais pas
+								</div>
+							</div>
+						</div>
+
+					<div class="row">
+						<div class="col-md-12 form-group ">
+							<label class="form-label">Le client souhaite-t-il conna&icirc;tre les r&eacute;dacteurs  qui vont travailler pour lui ?</label>
+						</div>
+							<div class="col-md-12 form-group">
+								<input type="radio" class="validate[required] icheck-set" name="client_know_writers"  value="yes">Oui&nbsp;
+								<input type="radio" class="validate[required] icheck-set" name="client_know_writers"  value="no">Non
+							</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-12 form-group ">
+							<label class="form-label">Quel est son budget 2015 pour le contenu marketing ?</label>
+						</div>
+							<div class="col-md-12 form-group">
+									
+								<div class="col-md-6" id="budget_div" >
+									
+									<input type="text" class="validate[required] form-control" value="" name="budget">
+									
+										<select name="budget_currency" class="form-control">
+											<option value="euros"  >&euro;</option>
+											<option value="pounds" >&pound;</option>
+											<option value="dollars">&dollar;</option>
+										</select>
+								</div>
+
+								<div class="col-md-6 pull-left">
+									<label class="checkbox inline">
+										<input type="checkbox" id="budget_marketing" class="icheck-set" name="budget_marketing"  value="dont_know">Je ne sais pas
+									</label>
+								</div>	
+							</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-12  form-group">
+						<label><input type="radio" class="validate[required] form-control icheck-set"  name="quote_send_team"  value="send_sales_team" checked="checked"> Finaliser le devis seul</label>
+						</div>
+					</div>
+
+					<div class="row" style="margin-top:20px;">
+						<div class="col-md-12 form-group text-center">
+						<button type="button" id="send_quote_subimt" class="btn btn-default btn-lg btn-validate text-uppercase">Validate <span class="glyphicon glyphicon-ok-sign"></span></button>
+						</div>
+					</div>
+				</div>	
+			</div>
+			<div class="row" style="margin-bottom:20px;">
+					<div class="col-md-4">
+						<a href="/quote-new/sales-final-validation" class="btn btn-default"><i class="glyphicon glyphicon-chevron-left"></i> Retour</a>							
+					</div>
+				</div>
+			</div>	
+		</form>
+	</div>
+{literal}
+	<script type="text/javascript">
+
+	$(document).ready(function()
+	{
+
+		$("#send-quote").validationEngine();
+
+				$('input.icheck-set').iCheck
+				({
+				checkboxClass: 'icheckbox_square-blue',
+				radioClass: 'iradio_square-blue'		
+				});
+
+
+				$('input[name="content_ordered_agency"]').on('ifChanged', function(event){		
+				var checkd_value=$(this).val();
+				if(checkd_value=='yes')
+				{
+					$("#agency_details").show();
+					$("#internal_team_details").hide();
+				}
+				else if(checkd_value=='no')
+				{
+					$("#agency_details").hide();
+					$("#internal_team_details").show();
+				}
+				
+				});		
+
+				$('#agency').on('ifClicked', function(event){		
+					$("#agency_name_div").toggle();	
+				
+				});
+
+				$('#budget_marketing').on('ifClicked', function(event){		
+				$("#budget_div").toggle();	
+			
+				});
+
+		$('.priority').chosen();
+	
+				$('input[name="client_aims[]"]').on('ifChanged', function(event){
+					
+						var value = "";
+						var check_length=$('input[name="client_aims[]"]:checked').length;
+						
+						var checkd_value=$(this).val();
+						$("#div_priority_"+checkd_value).toggle();
+						if(check_length==0)
+						{				
+							$('#aim_4').iCheck('enable');
+							$('#client_aims_comments_div').hide();
+						}
+						else{
+							$('#client_aims_comments_div').show();
+						}
+						
+						
+						$('input[name="client_aims[]"]:checked').each(function(){
+							value = $(this).val();				
+							if(value!='autre')
+							{
+								$('#aim_4').iCheck('uncheck');
+								$('#aim_4').iCheck('disable');
+							}
+							
+						});
+				});	
+
+
+	$("#send_quote_subimt").live('click',function(){
+
+		var quote_send_team=$('input[name="quote_send_team"]:checked').val();
+
+		if($("#send-quote").validationEngine('validate'))
+		{	
+			
+			$("#send-quote").submit();
+					
+		}
+			
+	});
+				
+
+	});
+</script>
+{/literal}

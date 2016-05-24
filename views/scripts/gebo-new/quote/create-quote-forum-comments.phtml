@@ -1,0 +1,169 @@
+<div class="quotes-forum" id="quote_forum" {if ($brief_mail|count eq 0 && $commentDetails|@count eq 0)}style="display:none;"{/if} >
+
+<h2 class="text-center"><i class="material-icons">question_answer</i><br> Discussion</h2>
+	<div class="row quotes-forum-body">
+		<div class="new-comment js-new-comment">
+			<div class="member member-no-menu">
+				<img width="30" height="30" title="" alt="" src="{$fo_path}/profiles/bo/{$userId}/logo.jpg" class="member-avatar">		
+			</div>
+			<form action="" method="POST" id="comment_form">
+				<div class="comment-frame">
+					<div class="comment-box">
+						<textarea tabindex="1" placeholder="Ecrire un commentaire" name="quotes_forum_comments" id="quotes_forum_comments" class="form-control comment-box-input js-new-comment-input" style="overflow: hidden; word-wrap: break-word; height: 75px;"></textarea>
+						{*<div class="comment-box-options">
+							<a title="Add an attachment…" href="#" class="comment-box-options-item js-comment-add-attachment"><span class="glyphicon glyphicon-paperclip"></span></a>
+							<a title="Mention a member…" href="#" class="comment-box-options-item js-comment-mention-member"><span class="glyphicon glyphicon-user"></span></a>					
+						</div>*}
+						<input type="hidden" name="user_id" value="{$user_id}" id="user_id">
+						<input type="hidden" name="quote_id" value="{$custom.quote_id}" id="quote_id">
+					</div>
+				</div>
+				<div class="add-controls u-clearfix">
+					<button type="button" id="comment_submit" name="comment_submit" class="btn btn-fill">Send</button>
+				</div>
+			</form>	
+		</div>
+		<div class="col-md-12" id="comments_list">
+			{if $commentDetails |@count gt 0}
+				{foreach from=$commentDetails item=comment name=commentDetails}
+					<div class="phenom phenom-action u-clearfix phenom-comment">
+						<div class="creator member js-show-mem-menu">
+							<img width="30" height="30" title="{$comment.profile_name|utf8_encode}" alt="{$comment.profile_name|utf8_encode}" src="{$comment.profile_pic}" class="member-avatar">		
+						</div>
+						<div class="phenom-desc">
+							<span idmember="{$comment.user_id}" class="inline-member js-show-mem-menu">
+								<span class="u-font-weight-bold">{$comment.profile_name}</span>
+							</span> 
+							<span>						
+								{if $comment.edit eq 'yes'}
+									<a  class="close hint--left" type="button" id="edit_comment_{$comment.id}" data-hint="Edit Comment" rel="{$comment.quote_id}"><i class="material-icons" style="font-size: 14px">mode_edit</i></a>
+									<a  class="close hint--left" rel="{$comment.quote_id}" data-hint="Hide Comment" type="button" id="delete_comment_{$comment.id}">&times;</a>		
+								{/if}						
+													
+							</span>
+							<div class="action-comment markeddown js-comment">
+								<div class="current-comment js-friendly-links" id="user_comment_{$comment.id}">
+									{$comment.comments|stripslashes}
+								</div>
+								<div class="comment-box" id="edit_user_comment_{$comment.id}" style="display:none">
+									<textarea tabindex="1" class="form-control comment-box-input js-text" name="quotes_forum_comments_{$comment.id}" id="quotes_forum_comments_{$comment.id}" rel="{$comment.quote_id}">{$comment.comments|stripslashes}</textarea>
+										{*<div class="comment-box-options">										
+											<a title="Mention a member…" href="#" class="comment-box-options-item js-comment-mention-member"><span class="glyphicon glyphicon-user"></span></a>
+										</div>*}
+								</div>
+							</div>
+							<div class="hide embedly js-embedly"></div>
+						</div>
+						<div class="edit-controls u-clearfix" id="control_comment_{$comment.id}" style="display:none">
+							<button type="button" id="update_submit_{$comment.id}" name="update_submit_{$comment.id}" class="btn">Mettre &agrave; jour</button>
+						</div>
+						<p class="phenom-meta quiet">
+							<span>{$comment.time}</span>
+						</p>
+					</div>			
+				{/foreach}
+			{/if}	
+		</div>
+	</div>
+</div>
+<!--<div class="row">
+	<div class="col-md-12 form-group text-center">
+		<a href="/quote-new/create-step1" class="btn btn-default pull-left"><i class="glyphicon glyphicon-chevron-left"></i> Retour</a>
+	</div>
+</div>-->
+
+{literal}
+<script type="text/javascript">
+$(document).ready(function() {
+//edit textarea toggle
+		$("body").on('click',"[id^=edit_comment_]", function(event) {
+			
+			event.preventDefault();
+			
+			var editButton=$(this).attr('id').split("_");
+			var comment_id=editButton[2];		
+			var comment_box=$('#user_comment_'+comment_id).toggle();
+			var comment_new=$('#edit_user_comment_'+comment_id).toggle();
+			$('#control_comment_'+comment_id).toggle();
+			
+				
+		});
+
+
+//update textare
+$("body").on('click',"[id^=update_submit_]", function() {
+			
+			var updateButton=$(this).attr('id').split("_");
+			var comment_id=updateButton[2];		
+			var comments=$("#quotes_forum_comments_"+comment_id).val();	
+			var quote_id=$("#quotes_forum_comments_"+comment_id).attr('rel');				
+			if(comments)
+			{
+				var target_page = '/quote-new/save-quote-comments?comment_action=update&quotes_forum_comments='+comments+'&comment_id='+comment_id+'&quote_id='+quote_id;			
+				$.post(target_page, function(data){					
+						
+						var obj = $.parseJSON(data);
+						$("#comments_list").html(obj.comments);
+						$("#comment_count").text(obj.count);
+						$("#comment_count_1").html('<i class="icon-comment"></i> '+obj.count);
+						$("#quotes_forum_comments").val('');
+					}
+				);
+
+			}
+		});
+
+$("body").on('click',"[id^=delete_comment_]", function() {			
+			
+			var quote_id=$(this).attr('rel');
+
+			var deleteButton=$(this).attr('id').split("_");
+			var comment_id=deleteButton[2];
+			var msg = "Are you sure you want to delete the comment?";
+			swal({
+				  title: "",
+				  text: msg,
+				  type: "warning",
+				  showCancelButton: true,
+				  confirmButtonColor: "#DD6B55",
+				  confirmButtonText: "Yes, delete it!",
+				  closeOnConfirm: false
+				},
+				function(){
+				  deleteComments(comment_id,quote_id);
+				  swal("Deleted!", "Your comment has been deleted.", "success");
+				}
+			);
+			/* smoke.confirm(msg,function(e){
+				if (e){
+					
+					deleteComments(comment_id,quote_id);
+				}
+				else{
+					return false;
+				}
+			}); */ 			
+				
+		});
+});
+
+function deleteComments(comment_id,quote_id)
+{
+	
+        var target_page = '/quote-new/save-quote-comments?comment_action=delete&comment_id='+comment_id+'&quote_id='+quote_id;
+		
+		$.post(target_page, function(data){									
+				
+				var obj = $.parseJSON(data);
+				$("#comments_list").html(obj.comments);
+				$("#comment_count").text(obj.count);
+				$("#comment_count_1").html('<i class="icon-comment"></i> '+obj.count);
+				$("#quotes_forum_comments").val('');
+				var brief="{/literal}{$brief_mail|@count}{literal}";
+				if($('.phenom').length==0 && brief==0)
+					$("#quote_forum").hide();
+
+			});
+}
+</script>
+{/literal}

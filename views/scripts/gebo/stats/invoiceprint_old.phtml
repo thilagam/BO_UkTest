@@ -1,0 +1,133 @@
+{literal}
+    <script type="text/javascript" >
+// Read a page's GET URL variables and return them as an associative array.
+function getUrlVars()
+{
+    var vars = [], hash;
+    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    for(var i = 0; i < hashes.length; i++)
+    {
+        hash = hashes[i].split('=');
+        vars.push(hash[0]);
+        vars[hash[0]] = hash[1];
+    }
+    return vars;
+}
+$(function(){
+$( "#print_invoice" ).click(function(){
+
+    $( "#logo" ).show();
+    $( "#tag1" ).show();
+    $( "#tag2" ).show();
+    $( "#invoicePrint" ).print();
+});
+});
+$(function(){
+
+   if(getUrlVars()["print"]=='yes')
+   {
+
+	$( "#logo" ).show();
+    $( "#tag1" ).show();
+    $( "#tag2" ).show();
+    $( "#invoicePrint" ).print();
+    }
+ });
+</script>
+<style type="text/css">
+ .table td {
+    border-top: 1px solid #DDDDDD;
+    line-height: 20px;
+    padding: 8px;
+    text-align: center;
+    vertical-align: top;
+}
+</style>
+{/literal}
+
+<div class="row-fluid"  id="invoicePrint" >
+	<div class="span12">
+		<h3 class="heading">
+			Invoice # {$smarty.get.invoiceid}
+			{if $smarty.get.print neq 'yes'}
+			<div style="display:inline;float:right"><button name="back" class="btn btn-gebo1" onClick="window.location='/stats/contrib-payments-list?submenuId=ML5-SL1'">Return</button></div>  
+			{/if}
+		</h3>
+
+	<div class="row-fluid">
+
+		<div class="span6">
+				<span style="display: block;" id="logo">
+					<img src="http://ep-test.edit-place.co.uk/FO/images/Contrib/logo-edit-place.png" width="279px" height="49px"/>
+				</span>
+				<span style="display: block;" id="tag1" class="help-block topset1">
+					16 rue Jesse Owens - 93200
+				</span>
+				<span id="tag2" style="display: block;" class="help-block">
+					SAINT  DENIS - FRANCE					
+				</span>			
+		</div>		
+		<div class="span4" style="float: right;">
+			<table class="table table-bordered">
+				<thead>
+					<th>BENEFICIAIRE </th>
+				</thead>
+				<tbody>
+				<tr>
+					<td style="text-align:left">
+						<address>
+							{$address}
+							{$payinfo_number}
+							{$remuneration}
+							{$mode}
+						</address>  
+					</td>					
+			</table>	
+		</div>
+	</div>
+
+		<table class="table table-bordered">
+			<thead>
+				<th colspan="2">invoice</th>
+			</thead>
+			<tbody>
+				<tr>
+				<td >No invoice: {$invoiceId_new} </td>
+				<td> invoice Date: {$date_invoice} </td>
+				</tr>
+			</tbody>
+		</table>
+
+		<span class="help-block">date : {$date_invoice_full}</span>
+		<table class="table table-hover">
+			
+				{$invoice_details_pdf}
+
+				{$tax_details_pdf}
+
+				{$final_invoice_amount}
+
+				{$bank_transfer_price}
+
+				{$total_transfer_amount}
+			</tbody>
+		</table>
+
+		<div class="row-fluid">
+			<div class="help-block">
+				<p>VAT not applicable 293B art CGI</p>
+				<p>INTRA COMMUNITY VAT: FR43-521 287 193</p>
+				<p>Invoice payable within 15 days following the end of writing</p>
+				<p>Foreign transfer fees are the responsibility of the editors</p>
+			</div>
+		</div>
+
+</div>
+</div>
+{if $smarty.get.print neq 'yes'}
+<div>
+	<a class="btn btn-gebo" href="/stats/downloadinvoice?submenuId={$submenuId}&invoiceid={$invoice_identifier|replace:'ep_invoice_':''}"><i class="splashy-arrow_large_down"></i> Download invoice</a>
+	<a class="btn btn-gebo " name="print_invoice" id="print_invoice"><i class="splashy-printer"></i> Print</a>
+</div>		
+{/if}
+		

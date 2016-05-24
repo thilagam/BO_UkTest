@@ -1,0 +1,111 @@
+<!-- header -->
+	<div class="navbar navbar-fixed-top">
+		<div class="navbar-inner">
+			<div class="container-fluid">
+				<a class="brand" href="/index"><i class="icon-home icon-white"></i> edit-place</a>
+				<ul class="nav user_menu pull-right">
+					{if $unreadcount gt 0}
+					<li class="hidden-phone hidden-tablet">
+						<div class="nb_boxes clearfix">
+						<!--<a data-toggle="modal" data-backdrop="static" href="#myMail" class="label ttip_b" title="New messages">25 <i class="splashy-mail_light"></i></a>-->
+						<a href="/mastermails/inbox-ep?submenuId=ML6-SL2" class="label ttip_b" style="background:#C62626" title="New messages">{$unreadcount} <i class="splashy-mail_light"></i></a>
+						</div>
+					</li>
+					{/if}
+                    <li class="divider-vertical hidden-phone hidden-tablet"></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle nav_condensed" data-toggle="dropdown"><i class="flag-gb"></i> <b class="caret"></b></a>
+                        <ul class="dropdown-menu">                            
+							<li><a href="http://admin-test.edit-place.com" target="_blank"><i class="flag-fr"></i> Fran&ccedil;ais</a></li>
+                        </ul>
+                    </li>					
+					<li class="divider-vertical hidden-phone hidden-tablet"></li>
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="/BO/theme/gebo/img/user_avatar.png" alt="" class="user_avatar" /> {$loginName} <b class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<li><a href="/index/logout">Log Out</a></li>						
+						</ul>
+					</li>
+				</ul>
+				 <ul class="nav" id="mobile-nav">
+					{foreach from=$MainMenu item=i key=MainMenukey name=MainMenu_loop}
+					{if $MainMenukey neq 'ML1' && $MainMenukey neq 'ML7'}<!--///to hide dash board from list//-->
+						<li class="dropdown">
+							<a data-toggle="dropdown" class="dropdown-toggle" href="/index/test?menuId={$MainMenukey}"> {$i|stripslashes} <b class="caret"></b></a>
+						  <ul class="dropdown-menu">
+							{foreach from=$SubMenus key=submenukey item=i name=count}
+
+							{foreach from=$i key=ids item=ii}
+
+							{if $EP_BO_MenuUrls.$ids neq null}
+
+                            {assign var=mainmenuid value=$ids|explode:"-"}
+                            {if $mainmenuid[0] eq $MainMenukey}
+
+								<li><a href="/{$EP_BO_MenuUrls.$ids}?submenuId={$ids}">{$ii|escape:"htmlall"}</a></li>
+
+							{/if}
+
+							{/if}
+
+							{/foreach}
+
+							{/foreach}
+
+						   </ul>
+						</li>
+					 {/if}
+					{/foreach}
+					</ul> 
+			</div>
+		</div>
+	</div>
+	<div class="modal hide fade" id="myMail">
+		<div class="modal-header">
+			<button class="close" data-dismiss="modal">×</button>
+			<h3>New messages</h3>
+		</div>
+		<div class="modal-body">
+			<div class="alert alert-info">In this table jquery plugin turns a table row into a clickable link.</div>
+			<table class="table table-condensed table-striped" data-provides="rowlink">
+				<thead>
+					<tr>
+						<th>Sender</th>
+						<th>Subject</th>
+						<th>Date</th>
+						<th>Size</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Declan Pamphlett</td>
+						<td><a href="javascript:void(0)">Lorem ipsum dolor sit amet</a></td>
+						<td>23/05/2012</td>
+						<td>25KB</td>
+					</tr>
+					<tr>
+						<td>Erin Church</td>
+						<td><a href="javascript:void(0)">Lorem ipsum dolor sit amet</a></td>
+						<td>24/05/2012</td>
+						<td>15KB</td>
+					</tr>
+					<tr>
+						<td>Koby Auld</td>
+						<td><a href="javascript:void(0)">Lorem ipsum dolor sit amet</a></td>
+						<td>25/05/2012</td>
+						<td>28KB</td>
+					</tr>
+					<tr>
+						<td>Anthony Pound</td>
+						<td><a href="javascript:void(0)">Lorem ipsum dolor sit amet</a></td>
+						<td>25/05/2012</td>
+						<td>33KB</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="modal-footer">
+			<a href="javascript:void(0)" class="btn">Go to mailbox</a>
+		</div>
+	</div>
+	

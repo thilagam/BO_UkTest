@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="keywords" content="{$meta_keywords}"/>
+<meta name="description" content="{$meta_description}"/>
+<meta name="rating" content="general"/>
+<meta name="language" content="{$lang}" />
+{foreach from=$SubMenusLeftPanel key=myId item=i name=count}
+    {if $myId eq $submenuId}
+        <title>Edit-Place Admin : {$i|escape:"htmlall"|stripslashes}</title>
+    {/if}
+{/foreach}
+<link href="image/favicon/favicon.ico" rel="shortcut icon" />
+{assign var='cssfiles' value=''}
+{foreach from=$cssList item=css}
+{assign var='cssfiles' value=$cssfiles$css,}
+<link href="/BO/{$css}" type="text/css" rel="stylesheet" />
+{/foreach}
+<!--<link type="text/css" rel="stylesheet" href="/min/b=BO&f={$cssfiles|substr:-1}"/>-->
+<!--<link href="/BO/{$css}" type="text/css" rel="stylesheet" />-->
+ <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans" />
+{foreach from=$javascriptList item=javascript}
+<script language="JavaScript" type="text/javascript" src="/BO/{$javascript}"></script>
+{/foreach}
+</head>
+{if $left_menu eq 'no'}
+<body  class="menu_hover sidebar_hidden">
+{else}
+<body  class="menu_hover sidebar_hidden">
+{/if}
+<div id="loading_layer" style="display:none"><img src="/BO/theme/gebo/img/ajax_loader.gif" alt="" /></div>
+		<div class="style_switcher">
+			<div class="sepH_c">
+				<p>Colors:</p>
+				<div class="clearfix">
+					<a href="javascript:void(0)" class="style_item jQclr blue_theme style_active" title="blue">blue</a>
+					<a href="javascript:void(0)" class="style_item jQclr dark_theme" title="dark">dark</a>
+					<a href="javascript:void(0)" class="style_item jQclr green_theme" title="green">green</a>
+					<a href="javascript:void(0)" class="style_item jQclr brown_theme" title="brown">brown</a>
+					<a href="javascript:void(0)" class="style_item jQclr eastern_blue_theme" title="eastern_blue">eastern blue</a>
+					<a href="javascript:void(0)" class="style_item jQclr tamarillo_theme" title="tamarillo">tamarillo</a>
+				</div>
+			</div>
+			<div class="sepH_c">
+				<p>Backgrounds:</p>
+				<div class="clearfix">
+					<span class="style_item jQptrn style_active ptrn_def" title=""></span>
+					<span class="ssw_ptrn_a style_item jQptrn" title="ptrn_a"></span>
+					<span class="ssw_ptrn_b style_item jQptrn" title="ptrn_b"></span>
+					<span class="ssw_ptrn_c style_item jQptrn" title="ptrn_c"></span>
+					<span class="ssw_ptrn_d style_item jQptrn" title="ptrn_d"></span>
+					<span class="ssw_ptrn_e style_item jQptrn" title="ptrn_e"></span>
+				</div>
+			</div>
+			<div class="sepH_c">
+				<p>Layout:</p>
+				<div class="clearfix">
+					<label class="radio inline"><input type="radio" name="ssw_layout" id="ssw_layout_fluid" value="" checked /> Fluid</label>
+					<label class="radio inline"><input type="radio" name="ssw_layout" id="ssw_layout_fixed" value="gebo-fixed" /> Fixed</label>
+				</div>
+			</div>
+			<div class="sepH_c">
+				<p>Sidebar position:</p>
+				<div class="clearfix">
+					<label class="radio inline"><input type="radio" name="ssw_sidebar" id="ssw_sidebar_left" value="" checked /> Left</label>
+					<label class="radio inline"><input type="radio" name="ssw_sidebar" id="ssw_sidebar_right" value="sidebar_right" /> Right</label>
+				</div>
+			</div>
+			<div class="sepH_c">
+				<p>Show top menu on:</p>
+				<div class="clearfix">
+					<label class="radio inline"><input type="radio" name="ssw_menu" id="ssw_menu_click" value="" checked /> Click</label>
+					<label class="radio inline"><input type="radio" name="ssw_menu" id="ssw_menu_hover" value="menu_hover" /> Hover</label>
+				</div>
+			</div>
+
+			<div class="gh_button-group">
+				<a href="#" id="showCss" class="btn btn-primary btn-mini">Show CSS</a>
+				<a href="#" id="resetDefault" class="btn btn-mini">Reset</a>
+			</div>
+			<div class="hide">
+				<ul id="ssw_styles">
+					<li class="small ssw_mbColor sepH_a" style="display:none">body <span class="ssw_mColor sepH_a" style="display:none"> color: #<span></span>;</span> <span class="ssw_bColor" style="display:none">background-color: #<span></span> </span></li>
+					<li class="small ssw_lColor sepH_a" style="display:none">a  color: #<span></span> </li>
+				</ul>
+			</div>
+		</div>
+<!-- header -->
+<div id="maincontainer" class="clearfix">
+	<header>
+	{foreach from=$headerList item=frame}
+		{include file="$frame"}
+		{/foreach}
+	</header>
+
+	{if $left_menu neq 'no'}
+	<!-- sidebar -- left panel -->	
+		<a href="javascript:void(0)" class="sidebar_switch on_switch ttip_r" title="Hide Sidebar">Sidebar switch</a>
+		<div class="sidebar">
+		{foreach from=$mainList item=frame}
+		  {include file="$frame"}
+		{/foreach}
+		</div>
+	{/if}	
+
+	<!-- main content -->
+	<div id="contentwrapper">
+		<div class="main_content">
+			{foreach from=$rightList item=frame}
+				{include file="$frame"}
+			{/foreach}
+	   </div>
+	</div>
+	{literal}
+	<script type="text/javascript">
+		/* show all elements & remove preloader*/
+		setTimeout('$("html").removeClass("js")',1000);
+        /////to display success or error messages after a operation in all pages/////////
+        var flash_message="{/literal}{$actionmessages[0]}{literal}";
+        var flash_type="{/literal}{$actionmessages[1]}{literal}";
+        if(flash_message)
+        {
+            if(flash_type=='error')ftype='st-error';else ftype='st-success';
+            $.sticky(flash_message, {autoclose : 5000, position: "top-center", type: ftype });
+        }
+	</script>
+	{/literal}
+</div>
+</body>
+</html>

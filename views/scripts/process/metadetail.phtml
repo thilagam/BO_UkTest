@@ -1,0 +1,38 @@
+<form action="scriptversion" method="post" name="script1">
+<div class="divLn"></div>
+<div class="fondTitle">META DETAILS</div>
+<div class="divLn"></div>
+<div class="divLn"></div>
+<div class="divLn"></div>
+<table width="100%">
+<tr class="fondtitre2">
+<td width=10></td>
+<td class="txtcourant" align="center">MetaDescription</td>
+<td width=10></td>
+<td class="txtcourant" align="center">MetaKeywords</td>
+<td width=10></td>
+<td class="txtcourant" align="center">MetaTitle</td>
+<td width=10></td>
+</tr>
+	<tr class="{cycle values="couleurpanier,txtcourant"}"  height="30">
+		<td width="10"></td>
+		<td>
+			<span class="txtcourant">{$metaDescr}</span>
+		</td>
+		<td width="10"></td>
+		<td>
+			<span class="txtcourant">{$metaKeywords}</span>
+		</td>
+		<td width="10"></td>
+		<td>
+			<span class="txtcourant">{$metaTitle}</span>
+		</td>
+		<td width="10"></td>
+	</tr>
+</table>
+<div class="divLn"></div>
+<div class="divLn"></div>
+<center>
+<input type="hidden" name="moduleName" value="{$moduleName}"/>
+<input class="button" type="button" name="close" onclick="javascript:window.close()" value="Close"></center>
+</form>

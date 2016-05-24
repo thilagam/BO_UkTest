@@ -1,0 +1,165 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	<h4 class="modal-title center-block">Select a price</h4>
+</div>
+<form action="/quote-new/save-hoq-mission?quote_id={$smarty.get.quote_id}" method="post" id="hoq-price-form">
+<div class="modal-body" id="hoq-price-body">
+	<input type="hidden" name="mission_id" value="{$smarty.get.mission_id}">
+	<input type="hidden" name="mindex" value="{$smarty.get.mindex}">
+		{if $hoqmissionDetails|@count >0}		
+			<p class="text-info"><i class="glyphicon glyphicon-info-sign"></i> Click on prices for more details
+				<label class="checkbox" style="padding-left: 35px; width: auto; text-align: left">
+					<input id="hshowtheorical" name="showtheorical" type="checkbox" {if $hoqmissionDetails[$smarty.get.mindex].showtheorical eq 'yes' || !$hoqmissionDetails[$smarty.get.mindex].selected_mission} checked {/if} {if $user_type eq 'superadmin'  || $user_type eq 'salesmanager' || $user_type eq 'salesuser' || $user_type eq 'multilingue' || $user_type eq 'prodsubmanager' || $user_type eq 'prodmanager'}{else} disabled="disable" {/if} class="icheckbox" data-toggle="checkbox">
+					<small>Show theorical prices</small>
+				</label>
+			</p>
+			<table class="table table-bordered" id="price-list">
+				{foreach from=$hoqmissionDetails item=mission name="misson"}
+					{assign var=gn_index value=$smarty.foreach.misson.index}
+					{assign var=ms_index value=$smarty.foreach.misson.index+1}
+					{if $mission.product_name}						
+							{if $mission.missionDetails|@count >0}
+								{foreach from=$mission.missionDetails item=chistory}
+									<tr>
+									{foreach from=$chistory item=history name="hmisson"}
+										{if $history.mission_id}
+											<td class="col-xs-2 text-center htheorical">		
+												{math equation='(v/y)' assign=price_word v=$history.unit_price y=$history.nb_words format='%.3f'}
+												{math equation='(x*y)' assign=price_per_art x=$mission.nb_words y=$price_word format='%.2f'}
+												{math equation='(p*v)' assign=mturnover p=$price_per_art v=$mission.volume format='%.2f'}
+												{math equation='((mw*hi)/hw)' assign=minternal_cost mw=$mission.nb_words hw=$history.nb_words hi=$history.internal_cost format='%.2f'}
+												{math equation='(100-((inc/ppa)*100))' assign=margin_percentage inc=$minternal_cost ppa=$price_per_art format='%.5f'}
+													<label class="radio">
+													<input type="radio" name="overview_missions_{$mission.identifier}" id="overview_missions_{$history.mission_id}_{$mission.identifier}" value="{$history.mission_id}" data-price-word="{$price_word}" rel="{$mturnover}" data-margin="{$margin_percentage}" data-price-per-art="{$price_per_art}" data-internal-cost={$minternal_cost} class="hicheck validate[required]" {if $history.mission_id eq $mission.selected_mission} checked {/if} data-toggle="radio"/>
+												</label>
+												<a class="hp" href="/quote-new/history-mission-details?mission_id={$history.mission_id}&show=theorical&from_site={$history.from_site}" data-toggle="modal" data-target="#viewHistroymission">{$history.unit_price|zero_cut:2}&{$history.currency};
+													<p class="grey-text">
+													{math assign="price_per_word"  equation='(c/d)' c=$history.unit_price d=$history.nb_words format='%.3f'} 
+														<span class="label label-default">{$price_per_word|replace:'.':','} &{$history.currency}; / word</span><br>
+													 {$history.company_name|utf8_encode} 
+													 {if $history.from_site=='fr'}<span class="label label-info plt">FR deal</span>{/if}
+													</p></a>								
+											</td>
+										{/if}
+										{if $history.mission_id && $history.real_cost}
+											<td class="col-xs-2 text-center hreal">
+												{math equation='((x/y)*v)'  assign=price_per_art x=$mission.nb_words y=$history.nb_words v=$history.real_unit_price format='%.2f'}
+												{math equation='(v/y)' assign=price_word v=$history.real_unit_price y=$history.nb_words format='%.3f'}
+												{math equation='(p*v)' assign=mturnover p=$price_per_art v=$mission.volume format='%.2f'}
+												{math equation='((mw*hi)/hw)' assign=minternal_cost mw=$mission.nb_words hw=$history.nb_words hi=$history.real_cost format='%.2f'}
+												{math equation='(100-((inc/ppa)*100))' assign=margin_percentage inc=$minternal_cost ppa=$price_per_art format='%.5f'}
+												<label class="radio">
+													<input type="radio" name="roverview_missions_{$mission.identifier}" id="roverview_missions_{$history.mission_id}_{$mission.identifier}" value="{$history.mission_id}" data-price-word="{$price_word}" rel="{$mturnover}" data-margin="{$margin_percentage}" data-price-per-art="{$price_per_art}" data-internal-cost={$minternal_cost} class="hicheck validate[required]"  {if $history.mission_id eq $mission.selected_mission} checked {/if} data-toggle="radio"/>
+												</label>
+												<a class="hp" href="/quote-new/history-mission-details?mission_id={$history.mission_id}&show=real&from_site={$history.from_site}" data-toggle="modal" data-target="#viewHistroymission">{$history.real_unit_price|zero_cut:2}&{$history.currency};
+													<p class="grey-text">
+													{math assign="price_per_word" equation='(a/b)' a=$history.real_unit_price b=$history.nb_words format='%.3f'} 
+														<span class="label label-default">{$price_per_word|replace:'.':','} &{$history.currency}; / word</span><br>
+														{$history.company_name|utf8_encode} 
+														{if $history.from_site=='fr'}<span class="label label-info plt">FR deal</span>{/if}
+													</p></a>
+											</td>
+										{/if}																			
+									{/foreach}
+									</tr>
+								{/foreach}
+								<input type="hidden" value="{$mission.margin_percentage}" id="hmargin_percentage_{$mission.identifier}" name="margin_percentage_{$mission.identifier}">
+								<input type="hidden" value="{$mission.unit_price}" id="hunit_price_{$mission.identifier}" name="unit_price_{$mission.identifier}">
+								<input type="hidden" value="{$mission.internal_cost}" id="hinternal_cost_{$mission.identifier}" name="internal_cost_{$mission.identifier}">								
+							{/if}
+					{/if}	
+				{/foreach}
+			</table>
+			</div>	
+			<div class="modal-footer">
+		
+					
+					<button  class="btn" data-dismiss="modal" type="reset">Annuler</button>
+					<button class="btn btn-fill btn-primary" type="button" id="price_validate">Valider</button>
+				
+			</div>	
+		{/if}
+	</form>
+</div>	
+{literal}
+<script>
+$(document).ready(function() {	
+	$('body').on('click','#price_validate',function(){
+		if($("#hshowtheorical").is(':checked')!=true && ($('#hoq-price-form input[name^="roverview_missions_"]').length)==0)
+		{
+			$('#hshowtheorical').prop('checked', 'checked');
+			$("#hshowtheorical").trigger("click");
+			$('#hoq-price-form').submit();
+		}
+		else
+		{
+			$('#hoq-price-form').submit();
+		}
+	});
+	
+	$('body').on('hide.bs.modal', '#hoq-price-modal', function () {		
+		$('#hoq-price-body').html('<div class="text-center"><img src="/BO/theme/gebo/img/ajax_loader.gif"></div>');
+		$('.modal-backdrop').remove();
+	});
+	
+	//toggle all checkboxes of details and overview tabs 
+	$('input[name^="overview_missions_"],input[name^="roverview_missions_"]').on('change',function(){		
+		
+		if($(this).is(':checked'))
+		{			
+			var DivId = $(this).attr('id');
+			var mission_ids=DivId.split("_");		
+			var missionIdentifier=mission_ids[2]+"_"+mission_ids[3];				
+			$("#overview_missions_"+missionIdentifier).radio('check');			
+			$("#roverview_missions_"+missionIdentifier).radio('check');
+			showtheoricalupdate(DivId);
+		}	
+	}); 
+	
+	
+	/*adding prefix for checkboxes for validations*/
+	var prefix = "mission_";	
+	$(".selectpicker").selectpicker();
+	$('input[type="radio"]').each(function() {
+        $(this).parents('label.radio').attr("id", prefix + this.id).removeClass("validate[required]");
+    });		
+	$("#hoq-price-form").validationEngine('attach',{prettySelect : true,autoHidePrompt: true,usePrefix: prefix});	
+	$('.hicheck').radio();
+	$('.icheckbox').checkbox();
+	
+	$('#hshowtheorical').change(function(){
+		var quote_id='{/literal}{$smarty.get.quote_id}{literal}';
+			$input = $(this);		 
+			//$('.icheck').prop('checked', false);
+			//$('.icheck').radio('uncheck');
+			if($input.is(':checked')){
+				showtheorical='yes';
+				$(".hreal").hide();
+				$(".htheorical").show();
+				id=$('input[name^="overview_missions_"]:checked').attr('id');
+			}
+			else{
+				showtheorical='no';
+				$(".hreal").show();
+				$(".htheorical").hide();
+				id=$('input[name^="roverview_missions_"]:checked').attr('id');
+			}
+			 if(id){
+				showtheoricalupdate(id);
+			}
+			calculateTurnover();
+    });
+	if($("#hshowtheorical").is(':checked'))
+	{
+		//alert('yes');
+		$('.htheorical').show();
+		$('.hreal').hide();
+	}
+	else{
+		$('.htheorical').hide();
+		$('.hreal').show();
+	}	
+});	
+	
+</script>
+{/literal}

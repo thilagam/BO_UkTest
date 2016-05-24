@@ -1,0 +1,98 @@
+{literal}
+<script type="text/javascript" src="/BO/theme/lbd/js/ulSelect.js"></script>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+<script language="javascript">
+/*client turnover calculation*/
+var quote_id='{/literal}{$smarty.get.quote_id}{literal}';
+function clientturnovercal(year,client_id)
+{
+	$.ajax({
+		type: 'GET',
+		url: '/quote-new/client-turnover',
+		data: 'quote_id='+quote_id+'&year=' + year + '&client_id=' +client_id,			  
+		success: function(data)
+		{
+		$('#ca_turnover').html(data);
+		}
+	});  
+}
+$(document).ready(function(){
+	
+		$('#listeContact').ulSelect();
+		
+		$('#listeContact li').click(function(e) 
+		{ 
+			var contact_client=$(this).attr('data-id');
+			var target="/quote-new/update-contact-client?contact_client="+contact_client+'&quote_id='+quote_id;
+			$.post(target);
+		});	
+});
+
+</script>
+{/literal}
+<div class="row" id="quote-header">
+
+			<div class="col-md-3 border-header">			
+				<div class="wrapListContact">
+					<div class="quoteHeaderClient">
+						<img width="72" class="img-client-logo" alt="" src="{$fo_path}profiles/clients/logos/{$create_step1.client_id}/{$create_step1.client_id}_global.png?f=12345">
+						<p class="quoteHeaderName">{$create_step1.company_name}</p>
+						<p class="quoteHeaderCode">Client code: {$create_step1.client_code}</p>
+						<p class="quoteHeaderURL"><a target="_client" href="/quote/create-client?uaction=view&client_id={$create_step1.client_id}&submenuId=ML13-SL1">Show profile</a></p>
+				</div>	
+			</div>
+		</div>
+
+			<div class="col-md-3 border-header">
+				<div class="wrapListContact tweets">
+					<div class="quoteHeaderTitle"><i class="fa fa-twitter"></i>Recent tweets</div>
+				{if $create_step1.twitter_screen_name}
+					<a class="twitter-timeline"  href="https://twitter.com/{$create_step1.twitter_screen_name}"  height="180" data-tweet-limit="3" data-chrome="nofooter noheader transparent"  data-screen-name="{$create_step1.twitter_screen_name}" data-widget-id="699969857945604096">Tweets by @{$create_step1.twitter_screen_name}</a>
+				{/if}	
+			
+				</div>
+			</div>
+
+
+			<div class="col-md-3 border-header" >
+				<div class="wrapListContact turnover">
+					<div class="form-inline">
+						
+						<select name="year" id="year" class="btn btn-default btn-xs" onchange="clientturnovercal(this.value,'{$create_step1.client_id}')">				
+							<option value="">TURNOVER</option>	
+							<option value="2014">TURNOVER 2014</option>	
+							<option value="2015">TURNOVER 2015</option>
+							<option value="2016" selected>TURNOVER 2016</option>
+						</select>
+						<br>				
+					</div>				
+					<p id="ca_turnover">{$create_step1.turnover|zero_cut_t}.{$create_step1.turnover1} &{$create_step1.currency};</p>										
+					<div class="quoteHeaderURL"><a href="/quote-new/sales-quotes-list?client_id={$create_step1.client_id}&submenuId=ML13-SL2" target="_clientQuotes">All quotes of the client</a></div>
+				</div>
+			</div>
+
+
+			<div class="col-md-3">
+				<div class="wrapListContact">
+					<div class="quoteHeaderTitle">Contacts(<a href="/quote/create-client?uaction=view&client_id={$create_step1.client_id}&submenuId=ML13-SL1" target="_blank">Update</a>)</div>
+				{if $create_step1.clientContacts|@count gt 0}
+					<ul id="listeContact">
+					{foreach  from=$create_step1.clientContacts item="clientContact" name="clientContacts" }						
+						<li data-id="{$clientContact.identifier}" {if $create_step1.contact_client eq $clientContact.identifier} class="active" {/if} >
+							<div class="listeContactTitle">
+								{$clientContact.first_name}
+							</div>
+							<div class="listeContactInfo">
+								{$clientContact.job_title} <br>
+								{$clientContact.email}
+							</div>
+						</li>
+					{/foreach}
+					</ul>
+				{else}
+					<strong>No Contacts Available</strong>
+				{/if}
+				</div>
+			</div>
+		</div>		
+	</div>

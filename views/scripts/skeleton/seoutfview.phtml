@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+    <head>
+        <title>{$meta_title}</title>
+        <meta name="keywords" content="{$meta_keywords}"/>
+        <meta name="description" content="{$meta_description}"/>
+        <meta name="rating" content="general"/>
+        <meta name="language" content="{$lang}" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link href="image/favicon/favicon.ico" rel="shortcut icon" />
+
+        {foreach from=$cssList item=css}
+            <link href="/BO/{$css}" type="text/css" rel="stylesheet" />
+        {/foreach}
+		{literal}			
+			<style type="text/css">
+			*
+			{
+				text-transform:none;
+			}
+			.main_content {
+				margin-left:0px;
+			}
+			</style>
+		{/literal}
+ <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans" />
+        {foreach from=$javascriptList item=javascript}
+        <script language="JavaScript" type="text/javascript" src="/BO/{$javascript}"></script>
+        {/foreach}
+
+    </head>
+
+    <body style="background: none;">
+	
+		<header>
+			<div class="navbar navbar-fixed-top">
+				<div class="navbar-inner">
+					<div class="container-fluid">
+						<a class="brand"><i class="icon-eye-open icon-white"></i> Result View</a>
+					</div>
+				</div>                           
+			</div>
+		</header>
+		<div id="seoviewresultspage" class="main_content">		
+				<div class="control-group">
+				<div class="row-fluid">{$table}</div>
+			</div>
+		</div>
+	
+    </body>
+{literal}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            if($('#smpl_tbl').length) {
+                $('#smpl_tbl').dataTable({
+                    "sPaginationType": "bootstrap",
+					"iDisplayLength" : 100,
+                    "sDom": "<'row'<'span4'l><'span4'T><'span4'f>r>t<'row'<'span6'i><'span6'p>>",
+                    "oTableTools": {
+                        "aButtons": [
+                            "copy",
+                            "print",
+                            {
+                                "sExtends":    "collection",
+                                "sButtonText": 'Save <span class="caret" />',
+                                "aButtons":    [ "csv", "xls", "pdf" ]
+                            }
+                        ],
+                        "sSwfPath": "/BO/theme/gebo/lib/datatables/extras/TableTools/media/swf/copy_csv_xls_pdf.swf"
+                    },
+		    "aaSorting": [[1, 'natural-asc']]
+                });
+            }
+        });
+    </script>
+{/literal}
+</html>

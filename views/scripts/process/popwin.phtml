@@ -1,0 +1,13 @@
+<form name="form1" method="post">
+<h3>Source Code Editing Pop Up Window</h3>
+<div id="my_popup">
+<center>
+<span class="txtcourant">Enter Reason for Editing Script : </span><input type="text" size="20" name="reason"/>
+<div class="divLn"></div>
+<textarea name='sourceCode' rows='30' cols='65' style="width:65%;height:40%;">{$code}</textarea>
+<div class="divLn"></div>
+<input class="button" type='submit' name='popSubmit' value='SaveModification' onclick='javascript:document.form1.action="popwin?action1=save";'>
+<input class="button" type="button" name="close" onclick="javascript:window.close()" value="Close"></center>
+<input type="hidden" name="vFile" value="{$vFile}">
+</div>
+</form>

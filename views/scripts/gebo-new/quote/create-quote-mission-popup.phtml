@@ -1,0 +1,753 @@
+{literal}
+<script type="text/javascript" src="/BO/theme/lbd/js/custom_quote.js"></script>
+<script type="text/javascript" src="/BO/theme/lbd/js/wizard.js"></script>
+<style>
+
+.modal-backdrop{
+	z-index:1;
+}
+</style>
+<script type="text/javascript">
+	$('input.icheck-input-radio').radio();
+	$('input.icheck-input-checkbox').checkbox();
+	
+	
+</script>
+{/literal}
+        
+<div class="wizard-container"> 
+ <div class="modal-header" style="border-bottom:0px !important">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	  </div>	
+	<div class=" wizard-card ct-wizard-orange" id="wizardProfile">
+		<form role="form" action="/quote-new/save-quote-mission?quote_id={$smarty.get.quote_id}"  id="create_quote_mission" name="create_quote_mission" class="create_quote_mission form-inline" method="post">
+		<input type="hidden" name="edit" value="{$smarty.get.mission}">
+		<input type="hidden" name="mid" value="{$smarty.get.mid}">
+		<input type="hidden" name="tid" value="{$smarty.get.tid}">
+		<input type="hidden" name="techedit" value="{$smarty.get.techmission}">
+			<ul class="hidden">
+				<li><a href="#mission-step1" data-toggle="tab"></a></li>
+				<li><a href="#mission-step2" data-toggle="tab"></a></li>
+				<li><a href="#mission-step3" data-toggle="tab"></a></li>
+				<li><a href="#mission-step4" data-toggle="tab" class="last"></a></li>
+			</ul>
+			<div class="tab-content center-block">
+				<div class="row tab-pane" id="mission-step1"> <!-- step 1 mission -->
+					 <div class="col-md-12 text-center">
+							<p class="form-label" >Type </p>
+							{if $user_type eq 'superadmin'  || $user_type eq 'salesmanager' || $user_type eq 'salesuser' || $user_type eq 'seouser' || $user_type eq 'seomanager'}
+							  <label class="text-uppercase radio radio-inline {if $smarty.get.tid || $mission.product eq 'translation' || $mission.product eq 'redaction'} hidden{/if}" >
+								<input type="radio" class="icheck-input-radio" name="product" id="product" value="content_strategy" {if $mission.product eq 'content_strategy' || $user_type eq 'seouser' || $user_type eq 'seomanager'} checked='checked'{/if} data-toggle="radio">
+								Content Strategy
+							  </label>							
+							{/if}
+							{if $user_type eq 'superadmin'  || $user_type eq 'salesmanager' || $user_type eq 'salesuser' || $user_type eq 'techuser' || $user_type eq 'techmanager' }
+							
+							  <label class="text-uppercase radio radio-inline {if $smarty.get.mid} hidden{/if}" >
+								<input type="radio" name="product" class="icheck-input-radio" id="product" value="tech" {if $techmission.product eq 'tech' || $user_type eq 'techuser' || $user_type eq 'techmanager'}checked="checked"{/if} data-toggle="radio">
+								Tech & Misc
+							  </label>							
+							{/if}
+							
+							{if $user_type eq 'superadmin'  || $user_type eq 'salesmanager' || $user_type eq 'salesuser' || $user_type eq 'multilingue' || $user_type eq 'prodsubmanager' || $user_type eq 'prodmanager' }
+							
+							  <label class="text-uppercase radio radio-inline {if $smarty.get.tid || $mission.product eq 'content_strategy'} hidden{/if}">
+								<input type="radio" data-toggle="radio" class="icheck-input-radio" name="product" id="product" value="translation" {if $mission.product eq 'translation'} checked='checked'{/if}>
+								Translation
+							  </label>							
+							
+							  <label class="text-uppercase radio radio-inline  {if $smarty.get.tid || $mission.product eq 'content_strategy'} hidden{/if}">
+							  	{if $mission.product}
+								<input type="radio" name="product" data-toggle="radio" class="icheck-input-radio" id="product" value="redaction" {if $mission.product eq 'redaction'}checked='checked'{/if} >
+								Writing
+								{elseif $techmission.product neq 'tech'}
+								<input type="radio" name="product" data-toggle="radio" class="icheck-input-radio" id="product" value="redaction" checked>
+								Writing
+								{/if}
+							  </label>
+							
+							{/if}
+							
+							
+						</div>
+
+						<div class="col-md-12 text-center content_strategist {if $mission.product eq 'content_strategy' || $user_type eq 'seouser' || $user_type eq 'seomanager' }{else}hidden{/if}">
+							<p class="form-label">Select Product</p>
+							<div class="form-group">
+								  <select class="col-md-12" required="required" id="seo_product" name='seo_product' data-title="Select Product"  >
+									 <option value="analyse_content_seo">Analyse SEO</option>
+								</select>
+								</div>
+						</div>
+
+							<div class="col-md-12 text-center all_languages">
+								 <p class="form-label">Language</p>
+								<div class="form-group">
+								 
+								  <select class="col-md-12" required="required" id="language" name='language' data-title="Select language" data-placeholder="Select language"  >
+									  <option></option>
+									  {if $techmission.language}
+									  {html_options  options=$ep_language_list selected=$techmission.language}
+									  {else}
+										{html_options  options=$ep_language_list selected=$mission.language}
+										{/if}
+									</select>
+									</div>
+								<div class="form-group">
+								  <select class="{if $mission.languagedest && $mission.product eq 'translation'} {else}hidden{/if} checklanguage" required="required" id="languagedest" name='languagedest' data-title="Select language" data-placeholder="Select language"  >
+									 <option></option>
+									{html_options  options=$ep_language_list selected=$mission.languagedest}
+									</select>
+								</div>
+							</div>
+
+							<!-- seo mission-->
+						<div class="col-md-12 text-center content_strategist {if $mission.product eq 'content_strategy' || $user_type eq 'seouser' || $user_type eq 'seomanager'}{else}hidden{/if}">
+								<p class="form-label">Mission duration</p>
+											 <div class="form-group">
+												<input name="strategy_mission_length" id="strategy_mission_length" class="form-control" type="text" value="{if $mission.mission_length}{$mission.mission_length}{else}{$seo_mission_length}{/if}">
+											</div>
+											<div class="form-group">				
+												<select name="strategy_mission_length_option" id="strategy_mission_length_option" class="pull-left">
+													<option value="days">Jours</option>
+												</select>	
+											</div>
+						</div>
+						<!--<div class="col-md-12 text-center content_strategist {if $mission.product eq 'content_strategy' || $user_type eq 'seouser' || $user_type eq 'seomanager' }{else}hidden{/if}">
+								<p class="form-label">Mission cost</p>
+											 <div class="form-group">
+												<input name="strategy_mission_cost" id="strategy_mission_cost" class="form-control" type="text" value="{if $mission.internal_cost}{$mission.internal_cost}{/if}">
+											</div>
+											
+						</div>-->
+											
+				
+				</div> <!-- Step1 End -->
+				<div class="row tab-pane" id='mission-step2'> <!-- Step2 start -->
+					<div class="col-md-12 text-center language-label {if $techmission.product}hidden{/if}" >
+						 <p class="form-label" >Produit </p>
+						<div class="form-group">
+							<select name="producttype" id="producttype" class="" data-title="Select Produit" onchange="fnCheckProductType(this);">
+							<option></option>
+							{foreach from=$producttype_array item=productloop name=productloop key=key}
+								{if $mission.producttype eq $key}
+								<option value="{$key}" selected="selected" configwords="{$oneshot_product[$key]}">{$productloop}</option>
+								{else}
+								<option value="{$key}"  configwords="{$oneshot_product[$key]}">{$productloop}</option>
+								{/if}
+							{/foreach}
+							</select>
+							<div id="producttypeotherdiv"  style="display: none;">
+								<input type="text" class="validate[required] form-control" value="{$mission.producttypeother}" id="producttypeother" name="producttypeother">
+							</div>
+						</div>
+					</div>	
+						<div class="col-md-12 text-center language-label {if $techmission.product}hidden{/if}">
+							 <p class="form-label" >nb mots </p>
+							<div class="form-group">
+								<input type="text" name="nb_words" id="nb_words" class="form-control validate[required,custom[number]] input-small" value="{$mission.nb_words}" rel="{$oneshot_max_writers}">
+							</div>
+						</div>
+						<!--Tech Mission step 1-->
+						<div class="col-md-12 text-center {if $techmission.product} {else} hidden{/if} tech-miss">
+								<div class="col-md-12 text-center" style="margin-bottom:10px;">
+									 <p class="form-label">Link to prod mission</p>
+										<div class="form-group ">
+										  <input name="prod_mission_selected" type='hidden' value="{if $techmission.prod_mission_selected}{$techmission.prod_mission_selected}{else}No{/if}" id="prod_mission_selected"/>
+										     <div class="btn-group" data-toggle="buttons">
+											    <button class="btn btn-sm btn-default {if $techmission.prod_mission_selected eq 'Yes'}btn-primary active{/if}" {if $prod_mission_count neq 0}{else} disabled="disabled"{/if} data-radio-name="prod_mission_selected" onclick="selectProdMission();">Yes</button>
+											    <button class="btn btn-sm  btn-default {if $techmission.prod_mission_selected eq 'No' ||  $techmission.prod_mission_selected eq ""} btn-primary active{else}{/if}" data-radio-name="prod_mission_selected" onclick="deselectProdMission();">No</button>
+											  </div>
+										</div>
+										
+								</div>
+								
+								<div class="form-group mission_perform" >
+								{if $smarty.get.tid}
+								{assign var=tid value=$smarty.get.tid}
+								{/if}
+									   <select class="{if $techmission.prod_mission_selected eq 'Yes'}{else}hidden{/if}" required="required" id="prodmissionslist" name='prodmissionslist' data-title="SELECT A PROD MISSION" onchange="fnprodvolume(this); return false;" >
+									   <option></option>
+										
+										 {foreach from=$prod_missions item=prod_title_array name=prod_title_array key=key}
+										 {if $prod_title_array|is_array}
+
+										 {else}
+										<option value="{$key}" {if $techmission.linked_to_prod eq $key && $techmission.linked_to_prod neq ""} selected='selected'{/if} rel="{$prod_missions.volume.$key}" >{$prod_title_array}</option>
+										{/if}
+									{/foreach}
+										</select>
+			
+								</div>
+								<div class="col-md-12 text-center">
+									 <p class="form-label text-uppercase">To Perform</p>
+										
+										   <label class="text-uppercase radio radio-inline mission_perform {if $techmission.prod_mission_selected eq 'Yes'}{else}hidden{/if}">
+											<input type="radio" class="icheck-input-radio" name="to_perform" id="to_perform" value="Before" {if $techmission.to_perform eq 'Before'} checked='checked'{elseif $techmission.to_perform eq "" && $techmission.prod_mission_selected eq 'Yes'} checked='checked' {else} {/if}>
+											Before
+										  </label>
+										
+										
+										   <label class="text-uppercase radio radio-inline">
+										  	
+											<input type="radio" name="to_perform" class="icheck-input-radio" id="to_perform" value="During" {if $techmission.to_perform eq 'During' || $techmission.to_perform eq ""} checked='checked'{/if}>
+											During
+											
+										  </label>
+										
+										
+										  <label class="text-uppercase radio radio-inline mission_perform {if $techmission.prod_mission_selected eq 'Yes'}{else}hidden{/if}">
+											<input type="radio" name="to_perform" class="icheck-input-radio" id="to_perform" value="After" {if $techmission.to_perform eq 'After'}checked="checked"{/if}>
+											After
+										  </label>
+										
+								</div>
+						</div>						
+				</div><!-- Step2 End -->
+				
+				<div class="row tab-pane" id='mission-step3'><!-- Step3 start -->
+
+					<div class="col-md-12 text-center language-label oneshot-no hidden {if $techmission.product}hidden{/if}">
+						<p class="form-label" >Volume</p>
+						<div class="form-group">
+							<input name="volume_no" id="volume-no" class="form-control validate[required,custom[number]] input-small" type="text" placeholder="Volume" value="{$mission.volume}">
+						</div>
+					</div>
+					<div class="col-md-12 text-center oneshot-yes language-label {if $techmission.product}hidden{/if}">
+						<p class="form-label" >Volume</p>
+						<div class="form-group">
+							<input name="volume_yes" id="volume-yes" class="form-control validate[required,custom[number]] input-small" type="text" placeholder="Volume" value="{$mission.volume}">
+						</div>
+					</div>
+					<div class="col-md-12 text-center language-label {if $techmission.product}hidden{/if}">
+						<p class="form-label" >One shot </p>
+						<div class="form-group">
+							
+							  <label class="text-uppercase radio radio-inline">
+								<input type="radio" name="oneshot" class="icheck-input-radio" id="oneshot" value="yes" {if $mission.oneshot eq 'yes'}checked {elseif $mission.oneshot neq 'no'} checked {/if}>
+								Oneshot
+							  </label>
+							
+							  <label class="text-uppercase radio radio-inline">
+								<input type="radio" name="oneshot" class="icheck-input-radio" id="oneshot" value="no" {if $mission.oneshot eq 'no'}checked {/if}>
+								Schedule
+							  </label>
+							
+						</div>
+					</div>
+					
+
+					<div class="col-md-12 text-center language-label {if $techmission.product}hidden{/if}">
+						<div class="oneshotVolume"  id="tempo_details" {if $mission.oneshot neq 'no'}style="display:none"{/if}>
+							<div class="col-md-12 text-center">
+								<div class="form-group">
+									<input name="volume_max" id="volume_max" class="form-control validate[required,custom[number]] input-small" type="text" placeholder="Volume" value="{$mission.volume_max}">
+								</div>
+								<div class="form-group">
+									<select name="tempo_type" id="tempo_type" class="">
+										<option {if $mission.tempo_type eq 'fix'} selected='selected' {/if} value='fix' tempoconfig="{$tempo_fix}-{$tempo_fix_days}">Fixe</option>
+										<option {if $mission.tempo_type eq 'max'} selected='selected' {/if} value="max"  tempoconfig="{$tempo_max}-{$tempo_max_days}">Max</option>
+									</select>
+									</div>
+								<div class="form-group">
+									<select name="delivery_volume_option" id="delivery_volume_option" class="">
+										<option {if $mission.delivery_volume_option eq 'every'} selected='selected' {/if} value="every" >Tous les</option>
+										<option {if $mission.delivery_volume_option eq 'within'} selected='selected' {/if} value="within">Sous</option>
+									</select>
+								</div>
+								<div class="form-group">
+									<input type="text" id="tempo_length" name="tempo_length" class="form-control validate[required] input-small" value="{$mission.tempo_length}" />
+									</div>
+								<div class="form-group">
+									<select name="tempo_length_option" id="tempo_length_option" class="">
+									<option {if $mission.tempo_length_option eq 'days'} selected='selected' {/if} value="days">Jours</option>
+									<option {if $mission.tempo_length_option eq 'week'} selected='selected' {/if} value="week" >Semaine</option>
+									<option {if $mission.tempo_length_option eq 'month'} selected='selected' {/if} value="month" >Mois</option>
+									<option {if $mission.tempo_length_option eq 'year'} selected='selected' {/if} value="year">An</option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+
+					<div class="col-md-12 text-center language-label {if $techmission.product}hidden{/if}">
+						<p class="form-label" >Mission duration  </p>
+						<div class="row">
+							<div class="col-md-6">
+								<div class=" pull-right {if $mission.mission_length eq "" && $mission}hidden{/if}" id="mission_duration_details">
+									<div class="form-group">
+									<input name="mission_length" id="mission_length" class="form-control validate[required,custom[number]] input-small" type="text" value="{$mission.mission_length}">
+									</div>
+									<div class="form-group">						
+										<select name="mission_length_option" id="mission_length_option" class="">
+										<option {if $mission.mission_length_option eq 'days'} selected="selected" {/if} value="days">Jours</option>
+										</select>	
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+									<label class="checkbox checkbox checkbox-inline pull-left">
+									<input type="checkbox" class="dont_know icheck-input-checkbox" id="duration_dont_know"  name="duration_dont_know" {if $mission.mission_length eq "" && $mission}checked{/if}>Je ne sais pas
+									</label>			
+							</div>							
+							<div class="clearfix"></div>
+						</div>
+						<input name="volume" id="volume" type="hidden" placeholder="Volume" value="{$mission.volume}">
+					</div>
+					
+						
+					<!--Tech Mission step 2-->
+					<div class="col-md-12 text-center {if $techmission.product eq 'tech'} {else} hidden{/if} tech-miss">
+								<div class="col-md-12 text-center">
+								 <p class="form-label">Tech & Misc Title</p>
+								<div class="form-group">
+								   <select class="" required="required " id="tech_title" name='tech_title' data-title="Please select a title" onchange="techtitleDetails(this.value); return false;">
+									  <option></option>
+									{foreach from=$tech_mission_title item=title_array name=title_array}
+										<option value="{$title_array.tid}" {if $techmission.tech_title_id eq $title_array.tid}selected{/if}>{$title_array.tech_title|utf8_encode}</option>
+									{/foreach}
+									</select>
+									<input type="hidden" value="{$techmission.tech_type}" name="tech_type" id="tech_type" rel="{$techmission.tech_title_id}">
+									</div>
+									</div>
+									
+									<div class="col-md-12 text-center">
+											 <p class="form-label">Please select a tempo</p>
+										 		<div class="form-group">
+												
+												  <label class="text-uppercase radio radio-inline">
+													<input type="radio" name="tech_oneshot" class="icheck-input-radio" id="tech_oneshot" value="yes" {if $techmission.tech_oneshot eq 'yes'}checked {elseif $techmission.tech_oneshot neq 'no'} checked {/if}>
+													Oneshot
+												  </label>
+												
+												  <label class="text-uppercase radio radio-inline">
+													<input type="radio" name="tech_oneshot" class="icheck-input-radio" id="tech_oneshot" value="no" {if $techmission.tech_oneshot eq 'no'}checked {/if}>
+													Schedule
+												  </label>
+												
+											</div>
+										</div>
+										<div class="col-md-12 text-center tech_shecdule ">
+											<div class="techoneshotVolume"  id="tempo_details" {if $techmission.tech_oneshot neq 'no'}style="display:none"{/if}>
+											<div class="col-md-12 text-center">
+												<div class="form-group">
+													<input name="tech_volume_max" id="tech_volume_max" class="form-control validate[required,custom[number]] input-small" type="text" placeholder="Volume" value="{$techmission.volume_max}">
+												</div>
+												<div class="form-group">
+													<select name="tech_tempo_type" id="tech_tempo_type" class="">
+														<option {if $techmission.tempo_type eq 'fix'} selected='selected' {/if} value='fix'>Fixe</option>
+													</select>
+													</div>
+												<div class="form-group">
+													<select name="tech_delivery_volume_option" id="tech_delivery_volume_option" class="">
+														<option {if $techmission.delivery_volume_option eq 'every'} selected='selected' {/if} value="every" >Tous les</option>
+														<option {if $techmission.delivery_volume_option eq 'within'} selected='selected' {/if} value="within">Sous</option>
+													</select>
+												</div>
+												<div class="form-group">
+													<input type="text" id="tech_tempo_length" name="tech_tempo_length" class="form-control validate[required] input-small" value="{$techmission.tempo_length}" />
+													</div>
+												<div class="form-group">
+													<select name="tech_tempo_length_option" id="tech_tempo_length_option" class="">
+													<option {if $techmission.tempo_length_option eq 'days'} selected='selected' {/if} value="days">Jours</option>
+													<option {if $techmission.tempo_length_option eq 'week'} selected='selected' {/if} value="week" >Semaine</option>
+													<option {if $techmission.tempo_length_option eq 'month'} selected='selected' {/if} value="month" >Mois</option>
+													<option {if $techmission.tempo_length_option eq 'year'} selected='selected' {/if} value="year">An</option>
+													</select>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-12 text-center hidden tech_mission_length_div">
+									 <p class="form-label">Mission duration</p>
+									 	<div class="form-group" >
+											 <div class="form-group">
+												<input name="tech_mission_length" id="tech_mission_length" class="form-control pull-right {if $techmission.tech_mission_length} {else}hidden{/if}" type="text" value="{$techmission.tech_mission_length}">
+											</div>	
+											<div class="form-group">				
+												<select name="tech_mission_length_option" id="tech_mission_length_option" class="pull-left">
+													<option value="days" {if $techmission.tech_mission_length_option eq 'days'}selected="selected"{/if}>Jours</option>
+												</select>	
+											</div>
+										</div>
+										
+									</div>
+									<div class="col-md-12 text-center tech_volume_div">
+									 <p class="form-label">Volume</p>
+									 	<div class="form-group " >
+											 <div class="form-group">
+												<input name="tech_volume" id="tech_volume" class="form-control pull-right" type="text" value="{if $techmission.volume}{$techmission.volume}{else}1{/if}">
+											</div>	
+										</div>
+										
+									</div>
+									
+			
+							</div>
+				</div>	<!-- Step3 End -->			
+					<div class="row tab-pane" id='mission-step4'> <!-- Step4 start -->
+					<div class="col-md-12">
+						<p class="form-label text-center" >Mission Summary</p>								 
+						<div class="row">
+							<div class="col-md-6"><label class="text-uppercase pull-right">
+								Mission Type:</label>
+								</div>
+							<div class="col-md-6"> <p class="pull-left" id="mission-type"> </p></div>
+							<div class="clearfix"></div>
+						</div>
+						<div class="row mission-default tech-mission">
+							<div class="col-md-6"><label class="text-uppercase pull-right">
+								Mission Language:</label>
+								</div>
+							<div class="col-md-6"> <p class="pull-left" id="mission-language1"> </p></div>
+							<div class="clearfix"></div>
+						  </div>
+						<div class="row mission-default tran-language">
+							<div class="col-md-6"><label class="text-uppercase pull-right">
+								Mission Language2:</label>
+								</div>
+							<div class="col-md-6"> <p class="pull-left" id="mission-language2"> </p></div>
+							<div class="clearfix"></div>
+						</div>
+						<div class="row tech-mission hidden">
+							<div class="col-md-6"><label class="text-uppercase pull-right">
+								Mission Title:</label>
+								</div>
+							<div class="col-md-6"> <p class="pull-left" id="mission-title"> </p></div>
+							<div class="clearfix"></div>
+						</div>
+						<div class="row tech-mission hidden">
+							<div class="col-md-6"><label class="text-uppercase pull-right">
+								Linked To:</label>
+								</div>
+							<div class="col-md-6"> <p class="pull-left" id="linkedto"> </p></div>
+							<div class="clearfix"></div>
+						</div>
+						<div class="row tech-mission hidden">
+							<div class="col-md-6"><label class="text-uppercase pull-right">
+								To Perform:</label>
+								</div>
+							<div class="col-md-6"> <p class="pull-left" id="mission-perform"> </p></div>
+							<div class="clearfix"></div>
+						</div>
+						<div class="row mission-default">
+							<div class="col-md-6"><label class="text-uppercase pull-right" >
+								Product Type:</label>
+								</div>
+							<div class="col-md-6"> <p class="pull-left" id="product-lang"></p></div>
+							<div class="clearfix"></div>
+						</div>
+						<div class="row content-strategy hidden">
+							<div class="col-md-6"><label class="text-uppercase pull-right" >
+								mission product:</label>
+								</div>
+							<div class="col-md-6"> <p class="pull-left" id="seo-mission-cost"> </p></div>
+							<div class="clearfix"></div>
+						</div>
+
+						<div class="row mission-default">
+							<div class="col-md-6"><label class="text-uppercase pull-right">
+								Word:</label>
+								</div>
+							<div class="col-md-6"> <p class="pull-left" id="pro-words"></p></div>
+							<div class="clearfix"></div>
+						</div>
+						<div class="row mission-default tech-mission">
+							<div class="col-md-6"><label class="text-uppercase pull-right">
+								Tempo:</label>
+								</div>
+							<div class="col-md-6"> <p class="text-left" id="oneshot-tempo"> </p></div>
+							<div class="clearfix"></div>
+						</div>
+						<div class="row mission-default tech-mission">
+							<div class="col-md-6"><label class="text-uppercase pull-right" >
+								Mission duration:</label>
+								</div>
+							<div class="col-md-6"> <p class="pull-left" id="duration-val"> </p></div>
+							<div class="clearfix"></div>
+						</div>
+						
+						<div class="row content-strategy hidden">
+							<div class="col-md-6"><label class="text-uppercase pull-right" >
+								mission language:</label>
+								</div>
+							<div class="col-md-6"> <p class="pull-left" id="content-language1"> </p></div>
+							<div class="clearfix"></div>
+						</div>
+						<div class="row content-strategy hidden">
+							<div class="col-md-6"><label class="text-uppercase pull-right" >
+								Mission duration:</label>
+								</div>
+							<div class="col-md-6"> <p class="pull-left" id="content-duration"> </p></div>
+							<div class="clearfix"></div>
+						</div>
+					
+						<div class="row mission-default tech-mission">
+							<div class="col-md-6"><label class="text-uppercase pull-right" >
+								Total Volume:</label>
+								</div>
+							<div class="col-md-6"> <p class="pull-left" id="total-vol"> </p></div>
+							<div class="clearfix"></div>
+						</div>										 
+					</div>
+				</div> <!-- Step4 End -->
+			</div>
+			<div class="row" > <!-- Button Start -->
+				<div class="col-md-12 text-center">
+					<div class="wizard-footer center-block ">
+						<div class="loading_img hidden">
+						<img src="/BO/theme/lbd/img/ajax_loader.gif" />
+						</div>
+						<button type='button' class='btn btn-previous btn-fill btn-default text-uppercase' name='previous' value='Back'><span class="glyphicon glyphicon-menu-left" ></span>Back
+						</button> 
+						
+						<button type='button' class='btn btn-next btn-fill text-uppercase' name='next' value=''> Next <span class="glyphicon glyphicon-menu-right"></span></button>
+						
+						<button  class='btn btn-finish btn-fill text-uppercase button-submit' name='quote_mission'>{if $mission.product || $techmission.product}Edit a Mission{else}Create a Mission{/if}</button>
+
+						<div class="col-md-12">
+						<button type='button' class='btn btn-finish btn-lg btn-fill text-uppercase' id="duplicate-button" title='Duplicate Mission'>Duplicate Mission</button>
+						</div>
+					</div>	
+				</div>	
+			</div>	<!-- Button End-->
+		</form>
+	</div>
+
+
+<!-- Duplicate Mission start-->
+
+	<div id="duplicate-mission-form" class="hidden row">
+		{include file="gebo-new/quote/duplicate-quote-mission-popup.phtml"}
+		</div>
+</div>
+{literal}
+<script type="">
+$(document).ready(function(){
+
+	$('.button-submit').on('click',function(){
+		$('#create_quote_mission').submit();
+		$('.loading_img').removeClass('hidden');
+		$('.button-submit').attr('disabled','disabled');
+		
+
+	});
+
+
+prodval=$('#product:checked').val();
+
+		$("#duplicate-button").on("click",function(){
+			//alert('test');
+			ajaxFormsubmit();			
+			$("#wizardProfile").addClass('hidden');
+			$("#duplicate-mission-form").removeClass('hidden');
+			val=$('#product:checked').val()
+			if(val=='tech'){
+				$('.tech_element').removeClass('hidden');
+			}
+			else{
+				$('.mission_element').removeClass('hidden');
+			}
+		});
+
+		
+		
+		if(prodval=='translation')
+		{
+			//$("#languagedest").addClass('hidden');
+			//$("#languagedest").selectpicker();
+			$("#languagedest").chosen({ allow_single_deselect: false,search_contains: true});
+			
+		}
+		else if(prodval=='tech')
+		{						
+			$(".mission-default").addClass('hidden');	
+			$(".tech-mission").removeClass('hidden');
+			$("#tech_mission_length_option").selectpicker();
+			prod_mission_val=$('#prod_mission_selected').val();
+			
+			if(prod_mission_val=='Yes')
+			{
+				$("#prodmissionslist").selectpicker();
+				$("#prodmissionslist").addClass('hidden');
+			}
+			techtitleupdate();
+
+		}
+		if(prodval=='content_strategy')
+		{
+			$('#seo_product').selectpicker()
+			$("#strategy_mission_length_option").selectpicker();
+		}
+
+		$("#tech_title").on('change',function(){
+			var titleval=$(this).find('option:selected');
+			$('#tech_type').val(titleval.text());
+			$('#tech_type').attr('rel',titleval.val());
+		});
+		$("body").on('change',"#tech_oneshot", function (event) {
+			var value=this.value;
+		
+			if(value=='no'){
+
+					$(".tech_shecdule").show();
+					$(".techoneshotVolume").show();
+					$(".tech_mission_length_div").removeClass('hidden');
+					$(".tech_volume_div").addClass('hidden');
+					techoneshotVolume('change');
+				}
+			else{
+
+					$(".tech_shecdule").hide();
+					$(".tech_volume_div").removeClass('hidden');
+					$(".tech_mission_length_div").addClass('hidden');
+					
+					var tech_title=$("#tech_title").val();					
+					if(tech_title)
+						techtitleDetails(tech_title);
+				}
+		});
+
+		if(prodval!='tech')
+		{
+			productType=$("#producttype").val();
+						if(productType=='autre')
+						{
+							$("#nb_words").removeAttr("min").removeAttr("max");
+							$("#producttypeotherdiv").show();
+							
+						}
+						else if(productType=='article_de_blog')
+						{
+							$("#nb_words").attr("min",'250');
+							$("#nb_words").attr("max",'500');
+						}
+					   else if(productType=='news')
+						{
+							$("#nb_words").attr("min",'50');
+							$("#nb_words").attr("max",'200');
+					  	}
+					   else if(productType=='descriptif_produit')
+					   {
+							$("#nb_words").attr("min",'30');
+							$("#nb_words").attr("max",'150');
+					   	}
+					   else if(productType=='guide')
+					   {
+							$("#nb_words").attr("min",'500');
+							$("#nb_words").attr("max",'1500');
+						}
+						else if(productType=='wordings')
+						{
+						$("#nb_words").attr("min",'1');
+						$("#nb_words").attr("max",'1');
+						}
+						else
+						{
+						$("#nb_words").removeAttr("min").removeAttr("max");
+						}
+		}
+
+
+		$('.btn[data-radio-name]').click(function() {
+		    $('.btn[data-radio-name="'+$(this).data('radioName')+'"]').removeClass('active');
+		    $('.btn[data-radio-name="'+$(this).data('radioName')+'"]').removeClass('btn-primary');
+
+		    $(this).addClass('btn-primary');
+		    $('input[name="'+$(this).data('radioName')+'"]').val(
+		        $(this).text()
+		    );
+		    	techtitleupdate();
+
+		});
+		
+});
+function ajaxFormsubmit(){
+		$.ajax({
+				url:'/quote-new/save-quote-mission',
+				type:'POST',
+				data:$('#create_quote_mission').serialize(),
+				success:function(html){
+				//alert(html);
+				}
+			});
+	}
+
+function selectProdMission()
+{
+	$('#prodmissionslist').removeClass('hidden');
+	$("#prodmissionslist").selectpicker();
+	$('.mission_perform').removeClass('hidden');
+	
+}
+function deselectProdMission()
+{
+	$('#prodmissionslist').addClass('hidden');
+	$('.mission_perform').addClass('hidden');
+	//$('input[name="to_perform"]').iCheck('uncheck');
+
+	var previousValue = $('input[name="to_perform"]:checked').val();
+  var name = $('input[name="to_perform"]:checked').attr('name');
+
+
+  if (previousValue != 'During')
+  {
+    $('input[name="to_perform"][value='+previousValue+']').removeAttr('checked');
+    $('input[name="to_perform"][value='+previousValue+']').closest('label').removeClass('checked');
+     $('input[name="to_perform"][value="During"]').attr('checked', true);
+     $('input[name="to_perform"][value="During"]').closest('label').addClass('checked');
+  }
+ 
+	
+}
+function techtitleDetails(title_id){
+	techval=title_id;
+	
+	 var target_page = "/quote-new/tech-delivery-mission?title_id="+techval;	
+		$.post(target_page, function(data){					
+				var missionlen=data.split('-');				
+				$("#tech_mission_length").val(missionlen[0].trim());
+					$("#tech_mission_length_option").val(missionlen[1].trim());
+				techoneshotVolume('change');
+			});
+		
+
+}
+
+function fnprodvolume(prod)
+{		
+			prod_volume=$(prod).find('option:selected').attr('rel');
+			//$("#tech_volume").val(prod_volume);
+}
+
+function techtitleupdate()
+{
+
+ prod_mission_val=$('#prod_mission_selected').val();
+			
+				if(prod_mission_val)
+				{
+					techtitleval=$('#tech_type').val();
+					if(techtitleval !="")
+					{
+					techtypeid="&typeid="+$('#tech_type').attr('rel');	
+					}
+					else
+					{
+					techtypeid="";
+					}
+					 $("#tech_title").selectpicker();
+					/*var target_page = "/quote-new/tech-title-select?prod_mission_val="+prod_mission_val+techtypeid;
+					$.post(target_page, function(data){					
+					var select = $('#tech_title');
+						select.empty().html(data);
+							$('#tech_title').attr("data-title","Please select a title")
+							$("#tech_title").selectpicker();	
+							$('#tech_title').trigger("chosen:updated");
+							$("#tech_title").addClass('hidden');
+						});	*/
+				}
+}
+</script>
+{/literal}

@@ -1,0 +1,96 @@
+{literal}
+<style>
+.hm-titles{
+	color: #959595;    
+    font-size: 12px;
+    font-weight: 700;
+    left: 15px;
+    letter-spacing: 1px;    
+    text-transform: uppercase;    
+}
+
+.hm-text{
+	color: #5B5B5C;    
+    font-size: 11px;
+    font-weight: 700;
+    left: 15px;
+    letter-spacing: 1px;    
+    text-transform: uppercase;
+    top: 15px;
+}
+
+.separator{
+	border-bottom: 1px solid #d6d7d9;	
+	padding-bottom: 5px;
+}
+
+</style>
+{/literal}
+
+
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	 <h4 class="modal-title">Mission de {$historyMission.product_name|utf8_encode} / {$historyMission.product_type_name} / {$historyMission.nb_words} Mots</h4>
+	 <p class="grey-text text-uppercase">{$historyMission.language_name|utf8_encode} {if $historyMission.product eq 'translation'} <i class="glyphicon glyphicon-chevron-right"></i> {$historyMission.languagedest_name|utf8_encode} {/if}</p>	
+	 <p class="text-uppercase row"> <span class="col-md-6">{$historyMission.company_name}</span><span class="col-md-6">Total : 
+	 {if $smarty.get.show eq 'theorical'}	
+	 {$historyMission.unit_price|zero_cut:2} {else}{$historyMission.real_unit_price|zero_cut:2}{/if}  &{$historyMission.currency};</span>
+	 <br>
+	 {if $smarty.get.show eq 'theorical'}	
+	 	{math assign="price_per_word"  equation='(v/y)' v=$historyMission.unit_price y=$historyMission.nb_words format='%.3f'} 
+	 {else}
+	 	{math assign="price_per_word" equation='(a/b)' a=$historyMission.real_unit_price b=$historyMission.nb_words format='%.3f'} 
+	 {/if}
+	 <span class="col-md-6 pull-right">Price per word : {if $price_per_word}{$price_per_word|replace:'.':','} {else} {$price_per_word|zero_cut:2} {/if} &{$historyMission.currency};</span>
+	 </p>
+</div>
+<div class="modal-body">
+	<div class="row">
+		<div class="col-md-8">
+		
+		{if $historyMission.quotecontractid}
+		<span>{$historyMission.contractname}</span>
+			{if $from_site=='fr'}
+				<a href="{$crossDomain}/contractmission/contract-edit?submenuId=ML13-SL3&contract_id={$historyMission.quotecontractid}&action=view" target="_blank">Signed contract</a> <strong>({$historyMission.signaturedate|date_format:'%Y-%m-%d'})</strong>
+			{else}
+				<a href="/contractmission/contract-edit?submenuId=ML13-SL3&contract_id={$historyMission.quotecontractid}&action=view" target="_blank">Signed contract</a> <strong>({$historyMission.signaturedate|date_format:'%Y-%m-%d'})</strong>
+			{/if}	
+		{else}
+		<span>{$historyMission.title|utf8_encode}</span>
+			{if $from_site=='fr'}
+				<a href="{$crossDomain}/quote/quote-followup?quote_id={$historyMission.quote_id}&submenuId=ML13-SL2" target="_blank">Signed quote</a> <strong>({$historyMission.signed_at|date_format:'%Y-%m-%d'})</strong>
+			{else}
+				<a href="/quote/quote-followup?quote_id={$historyMission.quote_id}&submenuId=ML13-SL2" target="_blank">Signed quote</a> <strong>({$historyMission.signed_at|date_format:'%Y-%m-%d'})</strong>
+			{/if}	
+		{/if}
+
+			
+		
+			<h4 class="hm-titles">SCHEDULE</h4>
+			<div class="col-md-12">
+				<span class="hm-text">
+				{if $historyMission.oneshot eq 'no'}
+					{$historyMission.volume_max} {$historyMission.tempo_text} {$historyMission.delivery_volume_option_text} {$historyMission.tempo_length} {$historyMission.tempo_length_option_text}
+				{else}
+					One shot : {$historyMission.volume}
+				{/if}
+				</span>
+			</div>
+			<div class="row col-md-12">
+				<h4 class="hm-titles">Total Delivery : {$historyMission.published_articles} art. | {$historyMission.mission_length} {$historyMission.mission_length_option_text}</h4>
+			</div>
+		</div>
+		<div class="col-md-4">
+			<h4 class="hm-titles separator">STAFFING</h4>
+			<div class="col-md-12 separator">
+				<i class="glyphicon glyphicon-hourglass"></i> <span class="hm-text">{$historyMission.staff_time} {$historyMission.staff_time_option_text}</span>
+			</div>
+			<div class="col-md-12 separator">				
+				<i class="glyphicon glyphicon-user"></i> <span class="hm-text">{$historyMission.writer_staff} - {$historyMission.writing_cost|zero_cut:2} &{$historyMission.currency};</span>
+			</div>
+			<div class="col-md-12 separator">
+				<i class="glyphicon glyphicon-education"></i> <span class="hm-text">{$historyMission.corrector_staff} - {$historyMission.correcting_cost|zero_cut:2} &{$historyMission.currency};</span>
+			</div>
+		</div>
+	</div>
+ </div>

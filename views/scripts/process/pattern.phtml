@@ -1,0 +1,72 @@
+<div class="fondTitle">PATTERN MANAGMENT : {$smarty.get.pat|upper}</div>
+
+<form action="pattern" method="get">
+<input type="hidden" name="do" value="add"/>
+<input type="hidden" name="pat" value="{$smarty.get.pat}"/>
+
+<table width="100%">
+<tr><td colspan="4" height="15"></td></tr>
+<tr class="couleurpanier">
+<td width="10"></td>
+<td class="txtcourant" align="center">%Name%</td>
+<td width="10"></td>
+<td class="txtcourant" align="center"><input type="text" size="50" name="page" value="{$selectedPattern->getNodeName()}"  onblur="checkpatternexistence(this.value)" class="required"><div id="code1" class="validation-advice"><span class="form-row"></span></div></td>
+</tr>
+<tr><td colspan="4" height="15"></td></tr>
+<tr class="couleurpanier">
+<td width=10></td>
+<td class="txtcourant" align="center">%Description%</td>
+<td width="10"></td>
+<td class="txtcourant" align="center" ><input type="text" size="50" name="description" value="{$selectedPattern->getNodeValue()}" /></td>
+</tr>
+<tr><td colspan="4" height="15"></td></tr>
+<tr class="couleurpanier">
+<td width=10></td>
+<td class="txtcourant" align="center">Site</td>
+<td width="10"></td>
+<td class="txtcourant" align="center">
+<select name="site[]" class="buttonMultiple" style="height:50px;width:200px;" multiple>
+	<option value="">ALL Site</option>
+	{html_options options=$siteList selected=$selectedPattern->getSiteasarray()}
+</select>
+<!-- <input type="text" size="40" name="site" value="{$selectedPattern->getSite()}" /> -->
+</td>
+</tr>
+<tr><td colspan="4" height="15"></td></tr>
+<tr class="couleurpanier">
+<td width=10></td>
+<td class="txtcourant" align="center">Skeleton</td>
+<td width="10"></td>
+<td class="txtcourant" align="center" ><input type="text" size="50" name="skeleton" value="{$selectedPattern->getSkeleton()}" /></td>
+</tr>
+<tr><td colspan="4" height="15"></td></tr>
+<tr class="couleurpanier">
+<td width=10></td>
+<td class="txtcourant" align="center">Common Module</td>
+<td width="10"></td>
+<td class="txtcourant" align="center" ><textarea class="textAreaTitle" name="modul">{$selectedPattern->getModule()}</textarea></td>
+</tr>
+<tr><td colspan="4" height="15"></td></tr>
+<tr class="couleurpanier">
+<td width=10></td>
+<td class="txtcourant" align="center">Javascript</td>
+<td width="10"></td>
+<td class="txtcourant" align="center" ><textarea class="textAreaTitle" name="javascript">{$selectedPattern->getJavascript()|escape}</textarea></td>
+</tr>
+<tr><td colspan="4" height="15"></td></tr>
+<tr class="couleurpanier">
+<td width=10></td>
+<td class="txtcourant" align="center">Css</td>
+<td width="10"></td>
+<td class="txtcourant" align="center" ><textarea class="textAreaTitle" name="css">{$selectedPattern->getCss()|escape}</textarea></td>
+</tr>
+</table>
+<form>
+<div class="divLn"></div>
+<div class="divLn"></div>
+<div class="tAlignCenter">
+&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" name="ajouter" value="%Submit%" class="button">
+&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" name="ajouter" value="%Return%" class="button" onClick="goTo('page');">
+</div>
+<div class="divLn"></div>
+<div class="divLn"></div>

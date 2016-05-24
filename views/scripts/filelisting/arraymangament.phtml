@@ -1,0 +1,140 @@
+{literal}
+<style>
+textarea
+{
+	width:380px;
+	height:90px;
+}
+</style>
+{/literal}
+
+
+<html>
+<head>
+<title>Array Mangament</title>
+</head>
+<body>
+</script>
+<div class="blockvertical">
+
+<form id="" method="post" name="myform"	onsubmit="return checkformArr(this);">
+<center>
+<div class="divLn"></div>
+<div class="fondTitle"><h2> ARRAY MANAGEMENT for a file : {$filename|upper}</h2></div>
+
+<!-- Table for Showing Data -->
+<table id='myTable'>
+	<tr class="fondtitre2">
+		<td align='left' width='30%'>Array Name</td>
+		<td align='left' width='40%'>Comment</td>
+		<td align='left' width='6%'>Nb</td>
+		<td align='left' width='6%'>Index</td>
+		<td align='left' width='6%'>Type</td>
+		<td align='center' width='20%'>Language</td>
+		<td align='left' width='13%'>Modify</td>
+	</tr>
+{assign var='fr' value=$dfr}
+{assign var='fileName' value=$fileName}
+{assign var='cntry' value=$cntry}
+{foreach from=$arrayv[0]->children() item=arrayNode}
+<tr class="{cycle values="couleurpanier,txtcourant"}" height="30">
+<td class="txtcourant" align='left' width='30%'>
+<a title='Click to Manage Array Indexs' href='arrayindex?arrayName={$arrayNode[0]->getName()}&fileName={$filename}'>
+{$arrayNode[0]->getName()}
+{if $arrayNode[0].type eq 'Array'}
+</a>&nbsp;&nbsp;<a title='search word(s) and then update it' href='arrayindex3?arrayName={$arrayNode[0]->getName()}&fileName={$filename}' target="_blank"><font style="color:green;">New UI</font></a>&nbsp;&nbsp;<a title='search exact index and then update it' href='arrayindex2?arrayName={$arrayNode[0]->getName()}&fileName={$filename}' target="_blank"><font style="color:#F88500;">UI 2</font></a>
+{/if}
+</td>
+<td class="txtcourant" align='left' width='30%'>{$arrayNode[0].desc|url_decode|utf8_decode|stripslashes}</td>
+<td class="txtcourant" align='center' width='6%'>
+{*
+{assign var='count' value=0}
+{if $arrayNode[0].type neq 'Simple'}
+{foreach from=$arrayNode[0]->children() item=grand_gen}
+{assign var='count' value=$count+1}
+{/foreach}
+{else}
+{assign var='count' value=1}
+{/if}
+{$count}
+*}
+{assign var='count' value=$filename|transarraycount:$arrayNode[0]->getName():$lang}
+{$count}
+</td>
+<td class="txtcourant" align='left' width='6%'>{$arrayNode[0].index}</td>
+<td class="txtcourant" align='left' width='6%'>{$arrayNode[0].type}</td>
+<td align='center' width='20%'>
+{if $arrayNode[0].language|needle:'in'}
+<img width="15" height="15" src="/image/shiva/in.gif"/>&nbsp;
+{/if}
+{if $arrayNode[0].language|needle:'fr'}
+<img width="15" height="15" src="/image/shiva/fr.gif"/>&nbsp;
+{/if}
+{if $arrayNode[0].language|needle:'pt'}
+<img width="15" height="15" src="/image/shiva/pt.gif"/>&nbsp;
+{/if}
+{if $arrayNode[0].language|needle:'en'}
+<img width="15" height="15" src="/image/shiva/en.gif"/>&nbsp;
+{/if}
+</td>
+<td align='left' width='13%'>
+<a name='Update' title='update' style='font-family:verdana color: #0000FF; font-size: 12pt' href='arraymangament?action1=update&fileName={$filename}&arrayname={$arrayNode[0]->getName()}&comment={$arrayNode[0]}'> 
+<img ALT='update row' src='/image/shiva/update-icon.jpg' width='20' height='20' border='0' /></a>
+<a name='Delete' onclick='return disp_confirm2(name)' title='delete' style='font-family:verdana color: #0000FF; font-size: 12pt' href='arraymangament?action1=delete&fileName={$filename}&arrayname={$arrayNode[0]->getName()}&type={$arrayNode[0].type}'> 
+<img ALT='deletes row' src='/image/shiva/delete-icon.gif' width='15' height='15' border='0' /></a>
+</td>
+{/foreach}
+</table>
+<div class="divLn"></div>
+<div class="divLn"></div>
+<div class="divLn"></div>
+
+<!-- Table for Entering Data -->
+<table width="100%">
+	<tr class="fondtitre2">
+		<td align="center" width="20%">Array Name</td>
+		<td align="center" width="30%">Comment</td>
+		<td align="center" width="20%">Language</td>
+		<td align="center" width="10%">Type</td>
+		<td align="center" width="10%">Index</td>
+		<td align="center" width="10%">Editable</td>
+	</tr>
+	<tr class="{cycle values="couleurpanier,txtcourant"}" height="16">
+		<td align="center" width="20%">
+			<input type="text" name="Arrayname" value="{$arrayName}" size='20'>
+		</td>
+		<td align="center" width="30%">
+			<textarea name="Comment" class="inputext">{$comment|url_decode|utf8_decode|stripslashes}</textarea>
+		</td>
+		<td align="center" width="20%">
+			<input type="checkbox" name="CountryLanguage1" value="fr" {$fr}>fr&nbsp;
+			<input type="checkbox" name="CountryLanguage2" value="pt" {$pt}>pt&nbsp;
+			<input type="checkbox" name="CountryLanguage3" value="en" {$en}>en&nbsp;
+			<input type="checkbox" name="CountryLanguage4" value="in" {$in}>in
+		</td>
+		<td align="center" width="10%">
+			<input name="Type" type="radio" value="Array" {$typeArray}/>Array&nbsp;
+			<div class="divLn"></div>
+			<input name="Type" type="radio"	value="Simple" {$typeSimple}/>Simple
+		</td>
+		<td align="center" width="10%">
+			<input name="Index" type="radio" value="Yes" {$indexYes} />Yes&nbsp;
+			<input name="Index" type="radio" value="No" {$indexNo}/>No
+		</td>
+		<td align="center" width="10%">
+			<input name="Editable" type="radio" value="Yes" {$editableYes} />Yes&nbsp;
+			<input name="Editable" type="radio" value="No" {$editableNo} />No
+		</td>
+	</tr>
+</table> 
+<div class="divLn"></div>
+<!-- <INPUT TYPE="button" Name="Back" VALUE="Back" onclick="javascript:goBackArr()">&nbsp;&nbsp;&nbsp;&nbsp; -->
+<a href="testfr">Back </a>&nbsp;&nbsp;&nbsp;&nbsp;
+<INPUT title='Submit' TYPE="Submit" Name="Submit1" VALUE="Submit">&nbsp;&nbsp;&nbsp;&nbsp;
+<INPUT TYPE="reset" Name="Submit" VALUE="Reset" onclick="reset()">
+<div class="divLn"></div>
+</center>
+</form>
+</div>
+</body>
+</html>

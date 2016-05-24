@@ -1,0 +1,242 @@
+		<div class="col-md-12 center-block" style="background: #fff;">
+							<p class="form-label text-center" >Duplicate Mission</p>
+							{if $smarty.get.mid neq  "" || $smarty.get.tid neq  ""}	
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+							{/if}										
+						
+							<form class="form-inline" id="duplicate_mission" >
+							{if $smarty.get.tid eq  ""}	
+							<div class="mission_element {if $smarty.get.mid neq ''} {else}hidden{/if}">
+							<input type="hidden" name="mid" id="mid" value="{$smarty.get.mid}">
+								<div class="col-md-12 text-center form-group">
+									<lable class="form-group" >Please select the duplicate parameter
+									</lable>								
+								</div>
+								<div class="col-md-7 pull-right">
+								<select class="" id="dup_parameter">
+											<option value="all_language">Language</option>
+											<!--<option value="words">words</option>
+											<option value="product_form">product</option>
+											<option value="volume_form">volume</option>-->
+										</select>
+								</div>
+								<div class="col-md-12 duplicate-form" id="all_language">
+										{foreach from=$ep_language_list item=all_language name=all_language key=lang_key}
+										<div class="check-duplicate col-md-2 pull-left">
+										<label class="text-uppercase checkbox checkbox-inline">
+											<input type="checkbox" name="duplicatelang[]" id="duplicatelang[{$lang_key}]" class="icheck-input-checkbox quote-miss" value="{$lang_key}">{$all_language}
+										</label>	
+										</div>
+										{/foreach}
+									</div>
+									<div class="col-md-12 duplicate-form hidden" id="words">
+									<p class="form-label2" >nb words</p>
+										<div class="form-group">
+											<input type="text" name="duplicate_words" id="duplicate_words" class="validate[required,custom[number]] input-small" value="">
+										</div>
+									</div>
+									<div class="col-md-12 duplicate-form hidden" id="product_form">
+										<p class="form-label2" >select product</p>
+										<div class="form-group">
+											<select name="duplicate_producttype" id="duplicate_producttype" class="" data-placeholder="Select Produit">
+											<option></option>
+											{html_options  options=$producttype_array}
+											</select>
+											<div id="producttypeotherdiv"  style="display: none;">
+												<input type="text" class="span12 validate[required]" value="" id="duplicate_producttypeother" name="duplicate_producttypeother">
+											</div>
+										</div>
+									</div>
+									<div class="col-md-12 duplicate-form hidden" id="volume_form">
+										<p class="form-label2" >Enter Volume</p>
+										<div class="form-group">
+											<input name="duplicate_volume" id="duplicate_volume" class=" validate[required,custom[number]] input-small" type="text" value="">
+										</div>
+									</div>
+									</div>
+								{/if}	
+								{if $smarty.get.tid neq "" || $smarty.get.mid eq  ""}
+								<div class="tech_element {if $smarty.get.tid neq ''} {else}hidden{/if}">
+								<input type="hidden" name="tid" id="tid" value="{$smarty.get.tid}">
+								<input type="hidden" name="techduplicate" id="techduplicate" value="duplicate">
+								{if $prodmissionDetails}
+								<input type="hidden" name="prod_mission_selected_val" id="prod_mission_selected_val" value="{$prodmissionDetails}">
+								{/if}
+								<div class="col-md-12 text-center form-group">
+									<lable class="form-group" >Please select the duplicate parameter</lable>
+										<select class="" id="dup_parameter">
+										<option value="all_title">Title</option>
+										</select>
+									
+								</div>
+								<div class="col-md-12 duplicate-form" id="all_title">
+									{foreach from=$tech_mission_title item=title_array name=title_array}
+									<div class="form-group check-duplicate col-md-3 pull-left">
+									<label class="text-uppercase  checkbox checkbox-inline">
+										<input type="checkbox" name="duplicatetitle[]" id="duplicatetitle[{$title_array.tid}]" class=" icheck-input-checkbox" value="{$title_array.tid}">{$title_array.tech_title|utf8_encode}
+									</label>
+									</div>
+									{/foreach}
+									</div>
+								</div>
+								</form>
+							
+							
+
+							{/if}
+							<div class="col-md-12 text-center" id="submit">
+										<a class='btn btn-fill text-uppercase' id="validate_duplicate" type='button' name='Validate' title='Validate'>Validate</a>
+									</div>
+		</div>
+			
+
+{literal}
+<script type="">
+/* $('input.icheck-input-radio').iCheck({
+		checkboxClass: 'icheckbox_square-blue',
+		radioClass: 'iradio_square-blue'		
+	}); */
+	$('input.icheck-input-checkbox').checkbox();
+$(document).ready(function(){
+
+	var quote_id='{/literal}{$smarty.get.quote_id}{literal}';
+	$('#dup_parameter').selectpicker();
+	$('#duplicate_producttype').selectpicker();
+		$("#dup_parameter").on("change",function(){
+			selectedval=$(this).val();
+			$(".duplicate-form").addClass('hidden');
+			$("#"+selectedval).removeClass('hidden');
+
+		});
+		var mid=$("#mid").val(); 
+		var tid=$("#tid").val();
+		var techduplicate=$('#techduplicate').val();
+		//alert($('.tech_element').is('.hidden'));
+		if(mid!='' && mid!=undefined)
+		{
+			$('.icheck-input-checkbox').checkbox();
+		$("body").on('click',"#validate_duplicate",function(){
+			//alert('test1');
+		$(this).attr('disabled','disabled');
+			$.ajax({
+				url:'/quote-new/save-quote-mission?parameter=duplicate&misssion=create&quote_id='+quote_id,
+				type:'POST',
+				data:$('#duplicate_mission').serialize(),
+				success:function(html){
+				//alert(html);
+				location.reload(); 
+				//$(location).attr('href','/quote-new/create-quote-mission-view');
+				}
+			});
+		});
+		}
+		else if(tid!='' && tid!=undefined && techduplicate=='duplicate')
+		{
+			//alert('test2');
+			$('.icheck-input-checkbox').checkbox();
+			techtitlerestrict();
+		$("body").on('click',"#validate_duplicate",function(){
+			$(this).attr('disabled','disabled');
+			$.ajax({
+				url:'/quote-new/save-quote-mission?quote_id='+quote_id,
+				type:'POST',
+				data:$('#duplicate_mission').serialize(),
+				success:function(html){
+				//	alert(html);
+				location.reload();
+				//$(location).attr('href','/quote-new/create-quote-mission-view');
+				}
+			});
+		});
+		}	
+		else if((mid=='' || mid==undefined) && techduplicate=='duplicate')
+		{
+
+			
+		$("body").on('click',"#validate_duplicate",function(){
+			$(this).attr('disabled','disabled');
+			if($('input.quote-miss:checked').length==0)
+			{
+				$('.icheck-input-checkbox').checkbox();
+				techtitlerestrict();
+				path='/quote-new/save-quote-mission?parameter=techduplicatenew&quote_id='+quote_id;
+			}
+			else
+			{
+				path='/quote-new/save-quote-mission?parameter=duplicatenew&quote_id='+quote_id;
+			}
+			
+			$.ajax({
+				url:path,
+				type:'POST',
+				data:$('#create_quote_mission, #duplicate_mission').serialize(),
+				success:function(html){
+					//alert(html);
+					location.reload();
+				//$(location).attr('href','/quote-new/create-quote-mission-view');
+				}
+			});
+		});
+		}	
+		
+			
+		
+		
+});
+
+function techtitlerestrict()
+{
+
+ prod_mission_val=$('#prod_mission_selected_val').val();
+
+ 	if(prod_mission_val==undefined)
+ 		$('#create_quote_mission > #prod_mission_selected').val();
+	
+				if(prod_mission_val)
+				{
+					techtitleval=$('#tech_type').val();
+					if(techtitleval !="")
+					{
+					techtypeid="&typeid="+$('#tech_type').attr('rel');	
+					}
+					else
+					{
+					techtypeid="";
+					}
+					 	
+					/*var target_page = "/quote-new/tech-title-select?prod_mission_val="+prod_mission_val+techtypeid+"&duplicatenew=yes";
+					$.post(target_page, function(data){	
+						var select = $('#all_title');
+						select.empty().html(data);
+						$('input.icheck-input-radio').iCheck({
+								checkboxClass: 'icheckbox_square-blue',
+								radioClass: 'iradio_square-blue'		
+							});
+						$('input.icheck-input-radio').iCheck('update');
+						});	 */
+				}
+}
+</script>
+<style type="text/css">
+.check-duplicate
+{
+	font-weight: bold;
+	text-align: left;
+	height: 43px;
+}
+.form-label2{
+	color: #fff;
+}
+input{
+	color:#555;
+}
+#mission-step{
+	overflow: auto;
+}
+#mission-step > .modal-dialog{
+width:100%;
+height:100%
+}
+</style>
+{/literal}
+

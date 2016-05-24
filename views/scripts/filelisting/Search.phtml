@@ -1,0 +1,340 @@
+<html>
+<head>
+<title>Search Managament</title>
+</head>
+<body>
+<br />
+<form name="myform1" id="form1" method="POST" onsubmit="return checkform4(this);">
+{assign var='post' value=true}
+{assign var='indexStatus' value=$indexStatus}
+{assign var='type' value=$type}
+{assign var='filename' value=$filename}
+{assign var='vArrayName' value=$vArrayName}
+{assign var='index' value=$index}
+{assign var='vlfr' value=$lfr}
+{assign var='vlpt' value=$lpt}
+{assign var='vlen' value=$len}
+{assign var='vlin' value=$lin}
+{assign var='searchValue' value=$searchV}
+{assign var='data' value=$arrayv}
+<center>
+<h3>Search Management</h3>
+<hr />
+<table width="100%" bgcolor="00FFFF">
+	<tr>
+		<td align="center" width="200">Insert keywords to search</td>
+		<td align="left" width="200">
+			<input type="text" name="find"	value="$vIndex" size="35"></td>
+			<td align="left" width="140">
+			<input name="btnFind" value="Search" type="submit" onclick='checkFindText();' value='{$searchValue}'> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<input type='button' name='backtoDetails' value='Back To Details' onClick='goBack2details({$arrayName},{$fileName})'>
+		</td>
+	</tr>
+</table>
+</center>
+</form>
+<form name="myform" id="myform" method="POST">
+<center>
+<div class="divLn"></div>
+<div class="divLn"></div>
+{assign var='invisibleTable' value=null}
+<table bgcolor='#E0FFFF' id="myTable" border='1' align="center"	width="120%">
+	<thead>
+		<tr>
+			<th align="center" width='20%'>INDEX NAME</th>
+			<th align="center" width='20%'>FRANCE</th>
+			<th align="center" width='20%'>BRASIL</th>
+			<th align="center" width='20%'>UNITED STATES</th>
+			<th align="center" width='20%'>INDIA</th>
+			<th align="center" width='20%'>UPDATE</th>
+		</tr>
+	</thead>
+{if $typefrView eq 'Simple'}
+{assign var='invisibleTable' value=invisible}
+<tr bgcolor='00CC00'>
+<td align='left' width='20%'></td> <td align='left' width='20%'>
+{if $vlfr neq ''}
+	{if $totalLang|needle:$vlfr}
+	{assign var='tempfr' value=$resultView.fr}
+	<textarea name='t_fr'>{$tempfr[0]|utf8_decode|urldecode|stripslashes}</textarea>
+	{else}
+	<textarea name='t_fr' class='invisible' value=''></textarea>
+	{/if}
+{/if}
+</td><td align='left' width='20%'>
+{if $vlpt neq ''}
+	{if $totalLang|needle:$vlpt}
+	{assign var='temppt' value=$resultView.pt}
+	<textarea name='t_pt'>{$temppt[0]|utf8_decode|urldecode|stripslashes}</textarea>
+	{else}
+	<textarea name='t_pt' class='invisible' value=''></textarea>
+	{/if}
+{/if}
+</td><td align='left' width='20%'>
+
+{if $vlen neq ''}
+	{if $totalLang|needle:$vlen}
+	{assign var='tempen' value=$resultView.en}
+	<textarea name='t_en'>{$tempen[0]|utf8_decode|urldecode|stripslashes}</textarea>
+	{else}
+	<textarea name='t_en' class='invisible' value=''></textarea>
+	{/if}
+{/if}
+</td><td align='left' width='20%'>
+
+{if $vlin neq ''}
+	{if $totalLang|needle:$vlin}
+	{assign var='tempin' value=$resultView.in}
+	<textarea name='t_in'>{$tempin[0]|utf8_decode|urldecode|stripslashes}</textarea>
+	{else}
+	<textarea name='t_in' class='invisible' value=''></textarea>
+	{/if}
+{/if}
+</td><td align='left' width='20%'>
+<input type='hidden' value='simple' name='simple' >&nbsp;&nbsp;			
+</td></tr>
+
+{/if}
+{elseif $indexFind eq 'true'}
+	{assign var='j' value=0}
+	{foreach from=$resultF[0]->children() item=grand_gen}
+	{foreach from=$allLang item=l}
+	{assign var='resultChk' value=$data->xpath(/root/{$fileName}/{$l}/{$arrayName}/{$grand_gen[0]->getName()})}
+	{/foreach}
+	{assign var='resultChkfr' value=$resultChk.fr}
+	{assign var='resultChkpt' value=$resultChk.pt}
+	{assign var='resultChken' value=$resultChk.in}
+	{assign var='resultChkin' value=$resultChk.in}
+	
+	{if $resultChkfr[0] eq '' && $resultChkpt[0] eq '' && $resultChken[0] eq '' && $resultChkin[0] eq ''}
+		{if $grand_gen[0]->getName()|needle:$find}
+		<tr> <td align='left' width='20%'>
+			{if $indexStatus eq 'No'}
+				{assign var='str' value=$grand_gen[0]->getName()|replace:'element':''}
+				{$str}
+			{else}
+				{assign var='k1' value=$grand_gen[0]->getName()|replace:'element':''}
+				{if $k1 eq ''}
+					{assign var='key' value=$grand_gen[0]->getName()}
+				{else}
+					{assign var='key' value=$key1}
+				{$key}
+				{/if}
+			{/if}
+			</td><td align='left' width='20%'><input type='hidden' value='NewEntry' name='NewEntry'>
+			{if $langfrView|needle:'fr' && $vlfr eq 'fr'}
+				{assign var='resultFr' value=$data->xpath(/root/{$fileName}/{$vlfr}/{$arrayName}/{$grand_gen[0]->getName()})}
+				<textarea  name='text_fr[{$grand_gen[0]->getName()}]'></textarea><input type='hidden' name='key_fr[]'>
+			{else}
+				<textarea name='text_fr[]' class='invisible' visible='false' value=''></textarea>
+			{/if}
+				</td><td align='left' width='20%'>
+				
+			{if $langfrView|needle:'pt' && $vlfr eq 'pt'}
+				<textarea  name='text_pt[{$grand_gen[0]->getName()}]'></textarea><input type='hidden' name='key_pt[]'>
+			{else}
+				<textarea name='text_pt[]' class='invisible' visible='false' value=''></textarea>
+			{/if}
+				</td><td align='left' width='20%'>	
+				
+			{if $langfrView|needle:'en' && $vlfr eq 'en'}
+				<textarea  name='text_en[{$grand_gen[0]->getName()}]'></textarea><input type='hidden' name='key_en[]'>
+			{else}
+				<textarea name='text_en[]' class='invisible' visible='false' value=''></textarea>
+			{/if}
+				</td><td align='left' width='20%'>
+				
+			{if $langfrView|needle:'in' && $vlfr eq 'in'}
+				<textarea  name='text_in[{$grand_gen[0]->getName()}]'></textarea><input type='hidden' name='key_in[]'>
+			{else}
+				<textarea name='text_in[]' class='invisible' visible='false' value=''></textarea>
+			{/if}
+				</td><td align='left' width='20%'>
+			<input type='hidden' value={$j} name='trace'>
+			<input type='hidden' value="{$grand_gen[0]->getName()}" name='traceIndexArr[]' >
+			<a href='Search?action1=delete&fileName={$this->filename}&arrayName={$arrayName}&indexName={$grand_gen[0]->getName()}&trace={$j}'> 
+			<img ALT='delete row' src='/image/shiva/delete-icon.gif' width='20' height='20' border='0' /></a>
+			</td></tr>
+			{/if}
+	{else}
+			{assign var='resultChkTemp' value=$resultChk.$cntry}
+			{if $grand_gen[0]->getName()|lower|needle:$find|lower || $resultChkTemp[0]|lower|needle:$find|lower}
+				<tr><td align='left' width='10%'>
+				{if $indexStatus eq 'No'}
+					{assign var='str' value=$resultChkTemp[0]->getName()|replace:'element':''}
+					{$str}
+				{else}
+					{assign var='k1' value=$resultChkTemp[0]->getName()|replace:'element':''}
+					{if $k1 eq ''}
+						{assign var='key' value=$grand_gen[0]->getName()}
+					{else}
+						{assign var='key' value=$key1}
+					{$key}
+					{/if}
+				{/if}
+				
+			{assign var='ind' value=$resultChkTemp}	
+			</td><td align='left' width='20%'>
+			
+			{if $langfrView|needle:'fr' && $vlfr eq 'fr'}
+				{assign var='resultChkTemp' value=$resultChk.fr}
+				<textarea  name='text_fr[{$ind}]'>{$resultChkTemp[0]}</textarea>
+				<input type='hidden' value='{$resultChkTemp[0]}' name='key_fr[]'>
+			{else}
+				<textarea name='text_fr[]' class='invisible' visible='false' value=''></textarea>
+			{/if}
+				</td><td align='left' width='20%'>
+			
+			{if $eachlangfrView.fr|needle:'fr' && $vlfr eq 'fr'}
+				{assign var='resultChkTemp' value=$resultChk.fr}
+				<textarea  name='text_fr[{$ind}]'>{$resultChkTemp[0]}</textarea>
+				<input type='hidden' value='{$resultChkTemp[0]}' name='key_fr[]'>
+			{else}
+				<textarea name='text_fr[]' class='invisible' visible='false' value=''></textarea>
+			{/if}
+				</td><td align='left' width='20%'>
+				
+			{if $eachlangfrView.pt|needle:'pt' && $vlfr eq 'pt'}
+				{assign var='resultChkTemp' value=$resultChk.pt}
+				<textarea  name='text_pt[{$ind}]'>{$resultChkTemp[0]}</textarea>
+				<input type='hidden' value='{$resultChkTemp[0]}' name='key_fr[]'>
+			{else}
+				<textarea name='text_pt[]' class='invisible' visible='false' value=''></textarea>
+			{/if}
+				</td><td align='left' width='20%'>	
+			
+			{if $eachlangfrView.en|needle:'en' && $vlfr eq 'en'}
+				{assign var='resultChkTemp' value=$resultChk.en}
+				<textarea  name='text_en[{$ind}]'>{$resultChkTemp[0]}</textarea>
+				<input type='hidden' value='{$resultChkTemp[0]}' name='key_en[]'>
+			{else}
+				<textarea name='text_en[]' class='invisible' visible='false' value=''></textarea>
+			{/if}
+				</td><td align='left' width='20%'>
+			
+			{if $eachlangfrView.in|needle:'in' && $vlfr eq 'in'}
+				{assign var='resultChkTemp' value=$resultChk.in}
+				<textarea  name='text_in[{$ind}]'>{$resultChkTemp[0]}</textarea>
+				<input type='hidden' value='{$resultChkTemp[0]}' name='key_in[]'>
+			{else}
+				<textarea name='text_in[]' class='invisible' visible='false' value=''></textarea>
+			{/if}
+				</td><td align='left' width='20%'>
+				
+			<input type='hidden' value={$j} name='trace' >
+			<input type='hidden' value='{$grand_gen[0]->getName()}' name='traceIndexArr[]' >
+			<a href='Search?action1=delete&fileName={$this->filename}&arrayName={$arrayName}&indexName={$grand_gen[0]->getName()}&trace={$j}'> 
+			<img ALT='delete row' src='/image/shiva/delete-icon.gif' width='20' height='20' border='0' /></a>
+			</td></tr>
+			{/if}
+	{/if}
+	{assign var='j' value=$j+1}
+	{/foreach}
+	{/if}
+{else}
+	{foreach from=$resultF[0]->children() item=grand_gen}
+	{assign var='j' value=0}
+	<tr><td align='center' width='20%'>
+			{if $indexStatus eq 'No'}
+					{assign var='str' value=$resultChkTemp[0]->getName()|replace:'element':''}
+					{$str}
+				{else}
+					{assign var='k1' value=$resultChkTemp[0]->getName()|replace:'element':''}
+					{if $k1 eq ''}
+						{assign var='key' value=$grand_gen[0]->getName()}
+					{else}
+						{assign var='key' value=$key1}
+					{$key}
+			{/if}
+			{assign var='ind' value=$grand_gen[0]->getName()}
+			</td><td align='left' width='20%'>
+			
+			{if $resultF[0].language|needle:'fr' && $vlfr eq 'fr'}
+				{assign var='resultFr' value=$data->xpath(/root/$fileName/$vlfr/$arrayName/$ind)}
+				<textarea  name='text_fr[$ind]'>{$resultFr[0]|utf8_decode|urldecode|stripslashes</textarea>
+				<input type='hidden' value='{$resultFr[0]}' name='key_fr[]'>
+			{else}
+				<textarea name='text_fr[]' class='invisible' visible='false' value=''></textarea>
+			{/if}
+				</td><td align='left' width='20%'>
+			
+			{if $resultF[0].language|needle:'pt' && $vlpt eq 'pt'}
+				{assign var='resultFr' value=$data->xpath(/root/$fileName/$vlpt/$arrayName/$ind)}
+				<textarea  name='text_pt[$ind]'>{$resultFr[0]|utf8_decode|urldecode|stripslashes</textarea>
+				<input type='hidden' value='{$resultFr[0]}' name='key_pt[]'>
+			{else}
+				<textarea name='text_pt[]' class='invisible' visible='false' value=''></textarea>
+			{/if}
+				</td><td align='left' width='20%'>
+
+			{if $resultF[0].language|needle:'en' && $vlpt eq 'en'}
+				{assign var='resultFr' value=$data->xpath(/root/$fileName/$vlen/$arrayName/$ind)}
+				<textarea  name='text_en[$ind]'>{$resultFr[0]|utf8_decode|urldecode|stripslashes</textarea>
+				<input type='hidden' value='{$resultFr[0]}' name='key_en[]'>
+			{else}
+				<textarea name='text_en[]' class='invisible' visible='false' value=''></textarea>
+			{/if}
+				</td><td align='left' width='20%'>
+
+			{if $resultF[0].language|needle:'in' && $vlpt eq 'in'}
+				{assign var='resultFr' value=$data->xpath(/root/$fileName/$vlin/$arrayName/$ind)}
+				<textarea  name='text_in[$ind]'>{$resultFr[0]|utf8_decode|urldecode|stripslashes</textarea>
+				<input type='hidden' value='{$resultFr[0]}' name='key_in[]'>
+			{else}
+				<textarea name='text_in[]' class='invisible' visible='false' value=''></textarea>
+			{/if}
+				</td><td align='left' width='20%'>
+			<input type='hidden' value='{$j}' name='trace' >
+			<input type='hidden' value='{$grand_gen[0]->getName()}' name='traceIndexArr[]' >
+			<input type='hidden' value='{$grand_gen[0]->getName()}' name='indexName' >
+			&nbsp;&nbsp;
+			<a name='Delete' onclick='return disp_confirm(name)' href='Search?action1=delete&fileName={$this->filename}&arrayName={$arrayName}&indexName={$grand_gen[0]->getName()}&trace={$j}'> 
+			<img ALT='delete row' src='/image/shiva/delete-icon.gif' width='20' height='20' border='0' /></a>
+			</td></tr>
+		{assign var='j' value=$j+1}		
+	{/foreach}
+{/if}
+</table>
+<div class="divLn"></div>
+<input type='button' name='back' value='Back' onClick=goBack2({$fileName})>
+&nbsp;&nbsp;
+<input class="{$this->invisibleS}" name="submit" value="Submit" type="submit"> 
+<div class="divLn"></div>
+</center>
+
+<table class='{$invisibleTable}' width="300" align="left" border='1'>
+	<tr>
+		<td align="center" colspan="2">ADD A NEW INDEX</td>
+	</tr>
+	<tr class="couleurpanier" height="38">
+		<td align="left">
+	{if $typefrView neq 'Simple'}
+		{if $vlfr neq 'fr'}
+			<input type="checkbox" name="countryLang[]" value="fr" checked="checked">fr
+		{/if}
+		{if $vlpt neq 'pt'}
+			<input type="checkbox" name="countryLang[]" value="pt" checked="checked">pt
+		{/if}
+		{if $vlfr neq 'en'}
+			<input type="checkbox" name="countryLang[]" value="en" checked="checked">en
+		{/if}
+		{if $vlfr neq 'in'}
+			<input type="checkbox" name="countryLang[]" value="in" checked="checked">in
+		{/if}
+		</td><td align="left">
+		{if $indexStatus neq 'No'}
+			{if $indexStatus neq 'No'}
+				<input type="text" class="invisible" name="neword" value='element{$count}'>
+				<input type='hidden' name='indexNo' value='indexNo'>
+			{else}
+				<input type="text" name="neword" class='{$indexNo}'>
+			{/if}
+			&nbsp;&nbsp;<input type='submit' name='validate' value='Insert' onclick='return checkform3();'>
+		{/if}
+	{/if}		
+</td>
+</tr>
+</table>
+</form>
+</body>
+</html>

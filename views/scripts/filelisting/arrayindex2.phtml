@@ -1,0 +1,104 @@
+<html>
+<head>
+<title>Array Index Managament</title>
+</head>
+<body>
+<div class="divLn"></div>
+<!-- Initial Variable Declaration -->
+{assign var='post' value=true}
+{assign var='indexStatus' value=$indexStatus}
+{assign var='type' value=$type}
+{assign var='filename' value=$filename}
+{assign var='vArrayName' value=$vArrayName}
+{assign var='vIndex' value=$index}
+{assign var='vlfr' value=$lfr}
+{assign var='vlpt' value=$lpt}
+{assign var='vlen' value=$len}
+{assign var='vlin' value=$lin}
+{assign var='searchValue' value=$searchV}
+{assign var='data' value=$arrayv}
+<!-- Search Section -->
+<form action="arrayindex2" name="myform1" id="form1" method="POST" onsubmit="return checkform4(this);">
+<input name='fileName' type='hidden' value='{$fileName}' />
+<input name='arrayName' type='hidden' value='{$arrayName}'/>
+<center>
+<h3>Array Index Management For array {$vArrayName}</h3>
+<table width="100%" class="fondtitre2">
+	<tr>
+		<td align="center" width="200">Enter the index name to modify :</td>
+		<td align="left" width="200">
+			<input type="text" name="find" size="35">
+		</td>
+		<td align="left" width="140">
+			<input name="btnFind" value="Search" type="submit" onclick='checkFindText();' value='{$searchValue}'> 
+			&nbsp;&nbsp;&nbsp;&nbsp;
+		</td>
+	</tr>
+</table>
+</center>
+</form>
+<div class="divLn"></div>
+<div class="divLn"></div>
+{if $tab eq "block"}
+<form action="arrayindex2" name="myform2" id="form2" method="POST">
+<input name='fileName' type='hidden' value='{$fileName}' />
+<input name='arrayName' type='hidden' value='{$arrayName}'/>
+<input name='find' type='hidden' value='{$find}'/>
+{if $resultChkTemp}
+<table id="myTable" align="center" style="display:{$tab};" class="profitTable">
+	<thead>
+		<tr class="fondtitre2">
+			<th align="center" width='20%'>INDEX NAME</th>
+			<th align="center" width='20%'>FRANCE</th>
+			<th align="center" width='20%'>BRASIL</th>
+			<th align="center" width='20%'>UNITED STATES</th>
+			<th align="center" width='20%'>INDIA</th>
+			<th align="center" width='20%'>UPDATE</th>
+		</tr>
+	</thead>
+	<tr>
+	<td align='left' width='20%'>
+	{$find}
+	</td>
+	<td align='left' width='20%'>
+	{if $langfrView|needle:'fr'}
+		<textarea class="inputext"  name='text_fr[{$find}]'>{$resultChkTemp.fr|url_decode|utf8_decode|stripslashes}</textarea>
+	{else}
+		<input class='invisible' name='text_fr[]' value=''></input>
+	{/if}
+	</td>
+	<td align='left' width='20%'>
+	{if $langfrView|needle:'pt'}
+		<textarea class="inputext"  name='text_pt[{$find}]'>{$resultChkTemp.pt|url_decode|utf8_decode|stripslashes}</textarea>
+	{else}
+		<input name='text_pt[]' class='invisible' value=''></input>
+	{/if}
+	</td>
+	<td align='left' width='20%'>
+	{if $langfrView|needle:'en'}
+		<textarea class="inputext"  name='text_en[{$find}]'>{$resultChkTemp.en|url_decode|utf8_decode|stripslashes}</textarea>
+	{else}
+		<input name='text_en[]' class='invisible' value=''></input>
+	{/if}
+	</td>
+	<td align='left' width='20%'>
+	{if $langfrView|needle:'in'}
+		<textarea class="inputext"  name='text_in[{$find}]'>{$resultChkTemp.in|url_decode|utf8_decode|stripslashes}</textarea>
+	{else}
+		<input name='text_in[]' class='invisible' value=''></input>
+	{/if}
+	</td>
+	<td align='left' width='20%'>
+	<input class="button" width='20' height='20' name="Update" value="Update" type="submit">
+	</td>
+	</tr>
+</table>
+{else}
+<center>Index Not found in this array</center>
+{/if}
+{/if}
+</form>
+<div class="divLn"></div>
+<div class="divLn"></div>
+<input type="button" onclick='goBack3("{$fileName}")' value="Back" name="back"/>
+</html>

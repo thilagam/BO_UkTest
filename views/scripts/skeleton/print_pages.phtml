@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="keywords" content="{$meta_keywords}"/>
+<meta name="description" content="{$meta_description}"/>
+<meta name="rating" content="general"/>
+<meta name="language" content="{$lang}" />
+<link href="image/favicon/favicon.ico" rel="shortcut icon" />
+{assign var='cssfiles' value=''}
+{foreach from=$cssList item=css}
+{assign var='cssfiles' value=$cssfiles$css,}
+<link href="/BO/{$css}" type="text/css" rel="stylesheet" />
+{/foreach}
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans" />
+<script language="JavaScript" type="text/javascript" src="/BO/theme/gebo/js/jquery.min.js"></script>
+<script language="JavaScript" type="text/javascript" src="/BO/theme/gebo/js/jquery.printPage.js"></script>
+</head>
+<body  class="menu_hover">
+<div id="loading_layer" style="display:none"><img src="/BO/theme/gebo/img/ajax_loader.gif" alt="" /></div>
+
+
+<div id="maincontainer" class="clearfix" style="background: none !important;">
+
+	<div id="contentwrapper">
+
+			{foreach from=$rightList item=frame}
+				{include file="$frame"}
+			{/foreach}
+
+	</div>
+</div>
+</body>
+</html>

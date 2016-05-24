@@ -1,0 +1,81 @@
+<div class="modal-header modal-header-black">
+	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	<h4 class="modal-title center-block">Select your currency</h4>
+</div>
+<div class="modal-body">
+	<input type="hidden" id="quote_id" name="quote_id" value="{$smarty.get.quote_id}"/>
+
+		<div class="form-group">			
+			<div class="controls">				
+				<label class="radio">
+					<span><input type="radio" value="{$currency_rates.GBP}" data-currency="pound" class="form-control currency" name="currency" data-toggle="radio">GBP</span>
+				</label>
+				<label class="radio">
+					<span><input type="radio" value="{$currency_rates.USD}" data-currency="usd" class="form-control currency"  name="currency" data-toggle="radio">USD</span>
+				</label>
+			</div>
+			<div class="controls" id="exchange_div" style="display:none">
+				<label>Current rate</label>
+				<div class="input-group  col-md-5">					
+					<input type="text" class="form-control" value="" id="exchange_rate" name="exchange_rate">
+					<div class="input-group-addon">&euro;</div>
+				</div>
+			</div>
+		</div>		
+		<div class="form-group">
+			<div class="controls">
+				<button  class="btn btn-primary" type="submit" id="download_xlsx" style="display:none">Download XLSX</button>
+				<button  class="btn" data-dismiss="modal" type="reset">Annuler</button>
+			</div>
+		</div>
+	</form>
+</div>
+
+{literal}
+
+<script>
+var cexists ={/literal}"{$contractexists}"{literal};
+var c_codeexists ={/literal}"{$ca_number}"{literal};
+$(document).ready(function() {	
+	
+	$(".currency").radio();
+	
+	$('input[name="currency"]').on('change',function(){		
+		
+		if($(this).is(':checked'))
+		{			
+			var exchange_rate = $(this).val();
+			$("#exchange_rate").val(exchange_rate);
+			$("#exchange_div").show();
+			$("#download_xlsx").show();
+			
+		}	
+	}); 
+	
+	$("#download_xlsx").click(function(){
+		
+		var $radio = $('input[name=currency]:checked');
+		var exchange_rate = parseFloat($("#exchange_rate").val());
+		var currency = $radio.attr('data-currency');
+		var quote_id=$("#quote_id").val();
+		if(isNaN(exchange_rate))
+		{
+			swal(
+				  '',
+				  'Please enter exchange rate properly',
+				  'error'
+				);
+		}
+		else{
+			var download_xlsx='/quote-new/download-quote-xls?quote_id='+quote_id+'&currency='+currency+'&exchange_rate='+exchange_rate;
+			window.location=download_xlsx;
+		}
+		
+		
+	});
+	
+
+});
+</script>
+
+{/literal}

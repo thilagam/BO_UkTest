@@ -1,0 +1,112 @@
+<head>
+<title>File : Translation</title>
+</head>
+<body>
+<br/>
+<div class="blockvertical">
+<div class="divLn"></div>
+<form action="{$actiontodo}" method="post" name="find">
+<input type="text" name="find" size='15'>&nbsp;
+<INPUT align="left" TYPE="submit" Name="action1" VALUE="findarray">&nbsp;&nbsp;{$arrayfind}
+</form>
+<form action="{$actiontodo}" method="POST" name="myform1" onsubmit="return checkform2(this);">
+<center>
+<div class="divLn"></div>
+<div class="divLn"></div>
+<div class="fondTitle">FILE MANAGEMENT</div>
+<table width="100%">
+	<tr class="fondtitre2">
+		<td align='left' width='20%'>File Name</td>
+		<td align='left' width='40%'>Description</td>
+		<td align='left' width='13%'>Language</td>
+		<td align='left' width='7%'>Editable</td>
+		<td align='center' width='10%'>Update File</td>
+	</tr>
+{assign var='lang'	value=$arraylangTemp}
+{assign var='fr' value=$dfr}
+{foreach from=$arrayv->children() item=child}
+{assign var=lang0	value=null}
+{assign var=lang1	value=null}
+{assign var=lang2	value=null}
+{assign var=lang3	value=null}
+<tr title='Click to Manage Array'>
+<td align='left' width="20%"><a href='arraymangament?fileName={$child->getName()}'>{$child->getName()}</a></td>
+{foreach from=$child->attributes() key=key item=attrb}
+{if $key eq 'desc'}
+{assign var=descr value=$attrb}
+<td align="left" width="40%">{$attrb|url_decode|utf8_decode}</td>
+{/if}
+{if $key eq 'language'}
+<td align="left" width="13%">
+{if $attrb|needle:'in'}
+{assign var=lang0	value='in'}
+<img width="15" height="15" src="/BO/images/bo/in.gif"/>
+{/if}
+{if $attrb|needle:'fr'}
+{assign var=lang1	value=fr}
+<img width="15" height="15" src="/BO/images/bo/fr.gif"/>
+{/if}
+{if $attrb|needle:'pt'}
+{assign var=lang2	value=pt}
+<img width="15" height="15" src="/BO/images/bo/pt.gif"/>
+{/if}
+{if $attrb|needle:'en'}
+{assign var=lang3	value=en}
+<img width="15" height="15" src="/BO/images/bo/en.gif"/>
+{/if}
+</td>
+{/if}
+{if $key eq 'editable'}
+<td align="center" width="7%">{$attrb}</td>
+{/if}
+{/foreach}
+<td align='center' width="10%">
+<a title='update' style='font-family:verdana color: #0000FF; font-size: 12pt' href='filelisting?action1=update&file={$child->getName()}&descr={$descr}&countryLang={$lang0},{$lang1},{$lang2},{$lang3}' name='Update'> 
+<img src='/BO/images/bo/update-icon.jpg' width='25' height='25' border='0' />
+</a>
+&nbsp;
+<a title='delete' style='font-family:verdana color: #0000FF; font-size: 12pt' href='filelisting?action1=delete&file={$child->getName()}' id='Update' name='Delete' onclick='return disp_confirm2(name)'> 
+<img src='/BO/images/bo/delete-icon.gif' width='25' height='25' border='0' /></a>
+</td></tr>
+{/foreach}
+</table>
+<div class="divLn"></div>
+<div class="divLn"></div>
+<div class="divLn"></div>
+<table id='shiva' width="100%">
+	<tr class="fondtitre2">
+		<td align="left" width="15%">File Name</td>
+		<td align="left" width="15%">Language</td>
+		<td align="left" width="20%">Description</td>
+		<td align="left" width="10%">Editable</td>
+		<td align="left" width="10%"></td>
+	</tr>
+	<tr class="{cycle values=" couleurpanier,txtcourant"}" height="30">
+		<td>
+			<input type="text" name="Filename" value="{$file}" size='15'>
+		</td>
+		<td>
+			<input type="checkbox" name="CountryLanguage1" value="fr" {$fr} />fr
+		    <input type="checkbox" name="CountryLanguage2" value="pt" {$pt} />pt
+		    <input type="checkbox" name="CountryLanguage3" value="en" {$en} />en
+		    <input type="checkbox" name="CountryLanguage4" value="in" {$in} />in
+		</td>
+		<td>
+			<textarea class="inputext" name="Description">{$desc|utf8_decode}</textarea>
+		</td>
+		<td>
+			<input name="Editable" type="radio" value="Yes" {$editableYes} />Yes
+			<input name="Editable" type="radio" value="No" {$editableNo} />No
+		</td>
+		<td>
+			<INPUT title='Submit' TYPE="submit" Name="Submit1" VALUE="Submit">
+			<div class="divLn"></div>
+		    <INPUT title='Reset' TYPE="reset" Name="Reset" VALUE="Reset">
+		</td>
+	</tr>
+</table>
+<div class="divLn"></div>
+</center>
+</form>
+</div>
+</body>

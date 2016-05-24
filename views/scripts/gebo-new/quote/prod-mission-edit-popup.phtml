@@ -1,0 +1,658 @@
+{literal}
+<script src="/BO/theme/lbd/lib/JsEditable/jquery.jeditable.js" type="text/javascript" charset="utf-8"></script>
+<script src="/BO/theme/lbd/lib/JsEditable/jquery.jeditable.mini.js" type="text/javascript" charset="utf-8"></script>
+<style>
+.hm-titles{
+	color: #959595;    
+    font-size: 12px;
+    font-weight: 700;
+    left: 15px;
+    letter-spacing: 1px;    
+    text-transform: uppercase;    
+}
+
+.hm-text{
+	color: #5B5B5C;    
+    font-size: 11px;
+    font-weight: 700;
+    left: 15px;
+    letter-spacing: 1px;    
+    text-transform: uppercase;
+    top: 15px;
+}
+
+.separator{
+	border-bottom: 1px solid #d6d7d9;	
+	padding-bottom: 5px;
+}
+.tempoEdit{
+	padding:8px;
+	background-color:#FFF;
+}
+#tempo_adjust{
+	font-size: 9px !important;
+}
+select.eventEdit{
+	background-color: #fff !important;
+}
+.popover
+{
+	z-index: 9999 !important;
+}
+.xdsoft_datetimepicker
+{
+z-index: 8888 !important;	
+}
+</style>
+{/literal}
+
+
+<div class="modal-header" style="background-color:#F2F3F7">
+	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	 <h4 class="modal-title">Mission de {$quoteMission.product_name} / {$quoteMission.product_type_name} / {$quoteMission.nb_words} Mots</h4>
+	 <p class="grey-text text-uppercase">{$quoteMission.language_name} {if $quoteMission.product eq 'translation'} <i class="glyphicon glyphicon-chevron-right"></i> {$quoteMission.languagedest_name} {/if}</p>	
+</div>
+<div class="modal-body" style="background-color:#F2F3F7">
+	<div class="row">
+		<div class="col-md-8">
+			<h4 class="hm-titles">SCHEDULE</h4>
+			<div class="col-md-12 mission_details" id="{$quoteMission.identifier}">
+				<span class="hm-text">
+				<span id="offset" class="hidden">{$offsetid}</span>
+				{if $quoteMission.oneshot eq 'no'}
+					<p class="tempotext">
+					{$quoteMission.volume_max} {$quoteMission.tempo_text} {$quoteMission.delivery_volume_option_text} {$quoteMission.tempo_length} {$quoteMission.tempo_length_option_text}
+					</p>
+					{if $user_type eq 'superadmin' || $user_type eq 'prodmanager' || $user_type eq 'salesmanager' || $user_type eq 'salesuser' || $user_type eq 'multilingue' || $user_type eq 'prodsubmanager'}
+					<form name="tempo_adjust" id="tempo_adjust">
+						<p class="tempoEdit hidden">
+						
+						<input type="text" size="3" id="volume_option" name="volume_option" value="{$quoteMission.volume_max}" class="eventEdit"> 
+						<select name="tempo_option" class="eventEdit" id="tempo_option">
+							<option value="fix" tempoconfig="{$tempo_fix}-{$tempo_fix_days}" {if $quoteMission.tempo_text eq 'Fixe'}selected="selected"{/if}>Fixe</option>
+							<option value="max" tempoconfig="{$tempo_max}-{$tempo_max_days}" {if $quoteMission.tempo_text eq 'Max'}selected="selected"{/if} >Max</option>
+						</select>
+
+						<select name="tempo_volume_option" class="eventEdit" id="tempo_volume_option">
+						{foreach from=$volume_option_array item=voloploop name=voloploop key=key}
+							{if $voloploop eq $quoteMission.delivery_volume_option_text}
+							<option value="{$key}" selected="selected">{$voloploop}</option>
+							{else}
+							<option value="{$key}" >{$voloploop}</option>
+							{/if}
+						{/foreach}
+						</select>
+						<input type="text" size="3" name="tempo_length"  value="{$quoteMission.tempo_length}" class="eventEdit" id="tempo_length"> 
+						<select name="tempo_duration_option" id="tempo_duration_option" class="eventEdit">
+						{foreach from=$tempo_duration_array item=temoploop name=temoploop key=key}
+							{if $temoploop eq $quoteMission.tempo_length_option_text}
+							<option value="{$key}" selected="selected" >{$temoploop}</option>
+							{else}
+							<option value="{$key}" >{$temoploop}</option>
+							{/if}
+						{/foreach}
+						</select>
+						<a class="btn btn-success btn-xs text-center eventEdit" onclick="tempoAdjustSubmit('{$quoteMission.identifier}');" style="font-size:10px">Validate</a>
+						<span class="error"></span>
+						</p>
+					</form>
+					{/if}
+				{else}
+					One shot : <span id="{if $user_type eq 'superadmin' || $user_type eq 'prodmanager' || $user_type eq 'salesmanager' || $user_type eq 'salesuser' || $user_type eq 'multilingue' || $user_type eq 'prodsubmanager'}volume{/if}">{$quoteMission.volume}</span>
+				{/if}
+				</span>
+			</div>
+			<div class="row col-md-12">
+				<h4 class="hm-titles">Total Delivery :<span id="popvolume"> {$quoteMission.volume}</span/> art. | <span id="popmission">{$quoteMission.mission_length}</span> <span id="popmissionoption">{$quoteMission.mission_length_option_text}</span> </h4>
+				<span id="popnb_words" class="hidden" >{$quoteMission.nb_words}</span>
+			</div>
+			<div class="row col-md-12">
+				<h4 class="hm-titles">Add comments </h4>
+				
+				<form name="mission_comment_form" id="mission_comment_form">
+				<div class="member member-no-menu col-md-1">
+				<img width="30" height="30" src="{$fo_path}/profiles/bo/{$userId}/logo.jpg" class="member-avatar">		
+				</div>
+				<div class="col-md-11">
+					<textarea name="sales_mission_comment" placeholder="Write a comment" id="sales_mission_comment" class="col-md-12 form-control validate[required]"></textarea>
+					<br/>
+				</div>
+					<div class="col-md-2 pull-right" style="margin-top:5px">
+					{if $sales_review neq 'signed'}	
+					<a class="btn btn-success btn-xs text-uppercase" id="command_submit">save</a>
+					{/if}
+					</div>
+				</form>
+			</div>
+			<div class="row col-md-12">
+				<h4 class="hm-titles">Activity</h4>
+				<div id="comments_list">
+					{$quoteMission.logcomments}
+				</div>
+				
+			</div>
+		</div>
+		<div class="col-md-4">
+			<h4 class="hm-titles separator">STAFFING</h4>
+			<div class="col-md-12 separator">
+				<i class="glyphicon glyphicon-hourglass"></i> <span class="hm-text"><span id="mission_writers">{$quoteMission.staff_time}</span> {$quoteMission.staff_time_option_text}</span>
+			</div>
+			<div class="col-md-12 separator writer" id="{$quoteMission.writer_staff_identifier}">				
+				<i class="glyphicon glyphicon-user"></i> <span class="hm-text"><span id="staff_writer">{if $quoteMission.writer_staff eq ''}0{else}{$quoteMission.writer_staff}{/if}</span> - <span id="cost_writer">{$quoteMission.writing_cost|zero_cut:2}</span> &{$create_step1.currency};</span>
+			</div>
+			<div class="col-md-12 separator corrector" id="{$quoteMission.corrector_staff_identifier}">
+				<i class="glyphicon glyphicon-education"></i> <span class="hm-text"><span id="correcter_staff">{if $quoteMission.corrector_staff eq ''}0{else}{$quoteMission.corrector_staff}{/if}</span> - <span id="correcter_cost">{$quoteMission.correcting_cost|zero_cut:2}</span> &{$create_step1.currency};</span>
+			</div>
+			{if $quoteMission.other_cost ||  $quoteMission.other_staff}
+			<div class="col-md-12 separator autre" id="{$quoteMission.other_cost_identifier}">
+				<i class="glyphicon glyphicon-user"></i> <span class="hm-text"> <span id="other_staff">{if $quoteMission.other_staff eq ''}0{else}{$quoteMission.other_staff}{/if}</span> -<span id="other_cost">{$quoteMission.other_cost|zero_cut:2}</span> &{$create_step1.currency};</span>
+			</div>
+			{/if}
+			<div class="col-md-6 submission" >
+			<br>
+			{if $quoteMission.other_cost}
+
+			{elseif $sales_review neq 'signed'}
+			
+				<a id="addovercost" data-placement="bottom" data-toggle="popover" data-html="true"  data-container="#editmission .modal-content" data-content=''  class="btn btn-default btn-xs text-center text-uppercase"  >Add overcost</a>
+				 
+			{/if}
+				
+			</div>
+			
+		</div>
+	</div>
+ </div>
+
+ 
+
+ {literal}
+	<script language="javascript">
+		$(document).ready(function() 
+		{
+			$("#mission_comment_form").validationEngine();
+			
+			var loaded = false;
+			offset=$("#offset").text();
+
+			/*$('#addovercost').popover({ 
+					    html : true,
+					    title: function() {
+					      return $("#popover-head").html();
+					    },
+					    content: function() {
+					      return $("#popover-content").html();
+					    }
+					});*/
+				
+						
+
+			qmid={/literal}{if $smarty.get.id}{$smarty.get.id}{/if}{literal};
+			wid=$('.writer').attr('id');
+			cid=$('.corrector').attr('id');
+			aid=$('.autre').attr('id');
+
+
+
+			
+			$('.eventEdit').on('click',function(event)
+			{
+				event.stopPropagation();
+			});
+			    
+			$('body').on('click',function()
+			{
+				$('.tempotext').removeClass('hidden');
+				$('.tempoEdit').addClass('hidden');
+
+			});
+			{/literal}{if ($user_type eq 'superadmin' ||  $user_type eq 'salesmanager' || $user_type eq 'salesuser' || $user_type eq 'multilingue' || $user_type eq 'prodsubmanager' || $user_type eq 'prodmanager') && $sales_review neq 'signed' }{literal}
+			$('.tempotext').on('click',function(event)
+			{
+				event.stopPropagation();
+				$('.tempotext').addClass('hidden');
+				$('.tempoEdit').removeClass('hidden');
+				$('#volume_option').focus();
+
+			});
+
+			autoEditTextBox('#volume','/quote-new/tempo-adjust-update?taction=volume&mission_id='+qmid,'volume');
+			
+
+				{/literal}{if (($quoteMission.sales_suggested_missions eq "" && $sales_review neq 'signed') &&  ($user_type eq 'multilingue' || $user_type eq 'prodsubmanager' || $user_type eq 'prodmanager' ||  $user_type eq 'salesmanager' || $user_type eq 'salesuser')) || $user_type eq 'superadmin' } {literal}
+				autoEditTextBox('#staff_writer','/quote-new/tempo-adjust-update?taction=writ_staff&mission_id='+qmid+'&pmid='+wid,'stwriter');
+				autoEditTextBox('#cost_writer','/quote-new/tempo-adjust-update?taction=writ_cost&mission_id='+qmid+'&pmid='+wid,'stwritercost');
+				autoEditTextBox('#correcter_staff','/quote-new/tempo-adjust-update?taction=cor_staff&mission_id='+qmid+'&pmid='+cid,'corrector');
+				autoEditTextBox('#correcter_cost','/quote-new/tempo-adjust-update?taction=cor_cost&mission_id='+qmid+'&pmid='+cid,'correctorcost');
+				autoEditTextBox('#other_staff','/quote-new/tempo-adjust-update?taction=other_staff&mission_id='+qmid+'&pmid='+aid,'otherwriter');
+				autoEditTextBox('#other_cost','/quote-new/tempo-adjust-update?taction=other_cost&mission_id='+qmid+'&pmid='+aid,'othercost');
+				autoEditTextBox('#mission_writers','/quote-new/tempo-adjust-update?taction=mission_writ&mission_id='+qmid,'writer');
+				{/literal}{/if}{literal}
+
+			$('#addovercost').popover({ 
+					    html : true,
+					    title: function() {
+					      return $("#popover-head").html();
+					    },
+					    content: function() {
+					      return $("#popover-content").html();
+					    }
+					});
+			{/literal}{/if}{literal}
+
+			$('#command_submit').on('click',function(){
+			
+				if($('#mission_comment_form').validationEngine('validate'))
+				{
+					var quote_id ='{/literal}{$quoteMission.quote_id}{literal}';
+					var target_page = "/quote-new/tempo-adjust-update?taction=comment&mission_id="+qmid+"&quote_id="+quote_id;
+					$.ajax(
+					{
+						type: 'post',
+						url: target_page,
+						data: $('#mission_comment_form').serialize(),			  
+						success: function(data)
+						{
+							$('#sales_mission_comment').val('');
+							$('#comments_list').html(data);
+						}
+					});
+				}
+			});
+
+
+			/*validation check for oneshot no*/	
+			$("body").on('change keyup keypress','[id^=volume_option],[id^=tempo_option],[id^=tempo_volume_option],[id^=tempo_length],[id^=tempo_duration_option]', function() {
+   				oneshotno();
+		
+			});
+
+			/*hide popover*/
+			$('body').on('click', function (e) {
+       
+		        if ($(e.target).data('toggle') !== 'popover'
+		            && $(e.target).parents('[data-toggle="popover"]').length === 0
+		            && $(e.target).parents('.popover.in').length === 0) { 
+		            $('[data-toggle="popover"]').popover('hide');
+		        }
+		    });
+
+			$('body').on('change keyup keypress','#sub_mission_cost',function()
+			{
+				$("#sub_mission_cost").val($(this).val());
+			});
+			$('body').on('change keyup keypress','#autrewriter',function()
+			{
+				$("#autrewriter").val($(this).val());
+			});
+
+			/*auture popover submit*/
+
+		    $('body').on('click','#add_costoversubmit',function(e)
+		    {
+		    	//alert('test');
+		    	offset=parseInt($("#offset").text());	
+		    	var cost=$('#sub_mission_cost').val();
+		    	var writerstaff=$('#autrewriter').val();
+		    	var autrecurrency=$('#autrecurrency').val();
+		    		
+		    	if(writerstaff && cost && loaded!=true)
+		    	{
+		    		var target_page = "/quote-new/tempo-adjust-update?taction=autre&mission_id="+qmid;
+		    		
+					ajaxAuture(target_page,writerstaff,cost,offset,qmid,autrecurrency);
+					 loaded = true;
+		    	}
+		    });
+
+		});
+		
+
+		function ajaxAuture(target_page,writerstaff,cost,offset,qmid,autrecurrency)
+		{
+			$.ajax(
+					{
+					type: 'post',
+					url: target_page,
+					data: '&autrewriter='+writerstaff+'&sub_mission_cost='+cost+'&currency='+autrecurrency,	  
+					success: function(data)
+					{
+						//alert(data);
+						$('[data-toggle="popover"]').popover('hide');
+						$('.modal-content').find('.submission').hide();
+						$('.modal-content').find(".col-md-4").append(data);
+
+						
+							
+     				 		var internal=(parseInt($("#cost_writer").text())+parseInt(cost)+parseInt($("#correcter_cost").text()));
+     				 		$("div#overview").find('#internal_cost_'+offset).val(internal);
+     				 		fncalculateAutoTotal();	
+     				 		/*aid=$(data).find('.autre').attr('id');
+     				 		autoEditTextBox('#other_staff','/quote-new/tempo-adjust-update?taction=other_staff&mission_id='+qmid+'&pmid='+aid,'otherwriter');
+							autoEditTextBox('#other_cost','/quote-new/tempo-adjust-update?taction=other_cost&mission_id='+qmid+'&pmid='+aid,'othercost');*/
+					}
+					});
+		}
+
+		function tempoAdjustSubmit(missionid)
+		{
+
+			if(volume_false==true)
+			{
+				offset=$("#offset").text();
+				var target_page = "/quote-new/tempo-adjust-update?taction=tempo&mission_id="+missionid;
+				$.ajax(
+				{
+					type: 'post',
+					url: target_page,
+					data: $('#tempo_adjust').serialize(),			  
+					success: function(data)
+					{
+						
+						$('.tempotext').html(data);
+						$('.tempotext').removeClass('hidden');
+						$('.tempoEdit').addClass('hidden');
+
+						valdurasale=data.split(' ');
+						$("div#overview").find('#tempo_details_'+offset).html('<span style="padding:5px;" class="col-md-12"><strong>'+valdurasale[1]+'</strong> <span class="grey-text"> '+valdurasale[0]+' '+valdurasale[2]+' '+valdurasale[3]+' '+valdurasale[4]+'</span>  <strong>'+valdurasale[5]+'</strong> <span class="grey-text">'+valdurasale[6]+'</span></span>');
+						fncalculateAutoTotal();
+						//alert(data);
+						
+					}
+				});
+			}
+
+		}
+		function autoEditTextBox(identifier,url,type)
+		{
+
+			//alert(url);
+			offset=parseInt($("#offset").text());
+			if(type=='volume')
+			{
+			    $(identifier).editable(url,{
+			    	 submit    : '<button type="submit" class="btn btn-success btn-xs text-center">VALIDATE</button>',
+			         style   : 'display: inline',
+			         onblur : 'cancel',
+			     	 height: 20,
+			     	 width: 30,
+			     	 callback : function(value, settings) {
+
+			     	 	
+			     	 	writers=parseInt($('#mission_writers').text());
+			     	 	valdura=value.split('-');
+	         			$('#volume').text(valdura[0].trim());
+	         			$('#popmission').text(valdura[1].trim());
+	         			$('#popvolume').text(valdura[0].trim());
+	         			
+	         			$("div#overview").find('#volume_'+offset).text(valdura[0].trim());
+	         			missval=parseInt(valdura[1].trim())+writers;
+	         			$("div#overview").find('#missionlengthval_'+offset).text(missval);
+	         			$("div#overview").find('#mission_length_'+offset).val(valdura[1].trim());
+	         			fncalculateAutoTotal();
+	   			 		}
+			    });
+		    }
+		    else if(type=='writer')
+		    {
+		    	$(identifier).editable(url,{
+			    	 submit    : '<button type="submit" class="btn btn-success btn-xs text-center">VALIDATE</button>',
+			         style   : 'display: inline',
+			         placeholder: '',
+			     	 height: 20,
+			     	 width: 25,
+			     	 onblur : 'cancel',
+			     	 callback: function(value, settings)
+			     	 {
+			     	 	
+			     	 	missionval=parseInt($("#popmission").text());
+			     	 	total=parseInt(value)+parseInt(missionval);
+			     	 	$("div#overview").find('#missionlengthval_'+offset).text(total);
+			     	 }
+			     	 
+			    });
+
+		    }
+		    else if(type=='stwriter' || type=='corrector')
+		    {
+		    	
+		    	$(identifier).editable(url,{
+			    	 submit    : '<button type="submit" class="btn btn-success btn-xs text-center">VALIDATE</button>',
+			         style   : 'display: inline',
+			         placeholder: '',
+			     	 height: 20,
+			     	 width: 25,
+			     	 onblur : 'cancel',
+			     	 callback: function(value, settings)
+			     	 {
+			     	 	
+						
+			     	 	if (value.indexOf("-") >= 0) 
+						{
+							$('#editmission').modal('hide');
+				     	 	$('#editmission').on('hidden.bs.modal', function() {
+				     	 		   $(this).removeData('bs.modal');
+							});
+							valueid=value.split('-');
+
+							if(type=='stwriter')
+						 	{
+						  		$('#staff_writer').text(valueid[1].trim());
+						 		$('#staff_writer').closest('div.writer').attr('id',valueid[0].trim());
+						 		
+						 	}
+						 	else
+						 	{
+						 		
+						 		$('#correcter_staff').text(valueid[1].trim());
+						 		$('#correcter_staff').closest('div.corrector').attr('id',valueid[0].trim());
+						 		
+						 	}
+						 	targeturl="/quote-new/prod-mission-edit-popup?id="+qmid+"&offset="+offset;
+							 	 $('#editmission' + " .modal-dialog").load(targeturl);
+     				 			$('#editmission').modal('show');
+						 
+						}
+						else
+						{
+							
+							if (value.indexOf("_") >= 0) 
+							{
+								valueid=value.split('_');
+								if(type=='stwriter')
+						 		{
+						 		
+						 		$('#staff_writer').text(valueid[0].trim());	
+								//$("div#overview").find('#internal_cost_'+offset).val(valueid[1].trim());
+								}
+								else
+						 		{
+						 		
+						 		$('#correcter_staff').text(valueid[0].trim());	
+						 		//$("div#overview").find('#internal_cost_'+offset).val(valueid[1].trim());
+						 		
+						 		}
+							}
+							
+
+						}
+							fncalculateAutoTotal();
+							
+							
+								
+							   
+						
+			     	 }
+			     	 
+			    });
+
+		    }
+		    else if(type=='othercost' || type=='otherwriter')
+		    {
+		    	$(identifier).editable(url,{
+			    	 submit    : '<button type="submit" class="btn btn-success btn-xs text-center">VALIDATE</button>',
+			         style   : 'display: inline',
+			         placeholder: '',
+			     	 height: 20,
+			     	 width: 25,
+			     	 onblur : 'cancel',
+			     	 callback: function(value, settings)
+			     	 {
+			     	 	offset1=offset+1;
+			     	 	if (value.indexOf("_") >= 0) 
+							{
+								valueid=value.split('_');
+								if(type=='othercost')
+						 		{
+						 			$('#other_cost').text(valueid[0].trim());	
+						 			$("div#overview").find('#internal_cost_'+offset).val(valueid[1].trim());
+								}
+								else
+						 		{
+						 		$('#other_staff').text(valueid[0].trim());
+						 		}
+							}
+							fncalculateAutoTotal();
+
+						}
+							
+				});
+						
+
+		    }
+		    else
+		    {
+		    	$(identifier).editable(url,{
+			    	 submit    : '<button type="submit" class="btn btn-success btn-xs text-center">VALIDATE</button>',
+			         style   : 'display: inline',
+			         placeholder: '',
+			     	 height: 20,
+			     	 width: 25,
+			     	 onblur : 'cancel',
+			     	 callback: function(value, settings)
+			     	 {
+			     	 	
+						if (value.indexOf("-") >= 0) 
+						{
+							$('#editmission').modal('hide');
+				     	 	$('#editmission').on('hidden.bs.modal', function() {
+				     	 		   $(this).removeData('bs.modal');
+							});
+						
+							valueid=value.split('-');
+							if(type=='stwritercost')
+						 	{
+						 		
+						 		$('#cost_writer').text(valueid[1].trim());	
+						 		$("div#overview").find('#internal_cost_'+offset).val(valueid[2].trim());	
+
+						 		$('#staff_writer').closest('div.writer').attr('id',valueid[0].trim());
+											 		
+						 	}
+						 	else
+						 	{
+						 		
+						 		$('#correcter_cost').text(valueid[1].trim());	
+						 		$("div#overview").find('#internal_cost_'+offset).val(valueid[2].trim());
+						 		$('#correcter_staff').closest('div.corrector').attr('id',valueid[0].trim());
+
+						 	}
+						 	targeturl="/quote-new/prod-mission-edit-popup?id="+qmid+"&offset="+offset;
+							 $('#editmission' + " .modal-dialog").load(targeturl);
+     				 			$('#editmission').modal('show');
+							
+						}
+						else
+						{
+								
+							if (value.indexOf("_") >= 0) 
+							{
+								valueid=value.split('_');
+								//alert(valueid);
+								if(type=='stwritercost')
+						 		{
+						 		
+						 		$('#cost_writer').text(valueid[0].trim());	
+								$("div#overview").find('#internal_cost_'+offset).val(valueid[1].trim());
+								}
+								else
+						 		{
+						 		
+						 		$('#correcter_cost').text(valueid[0].trim());	
+						 		$("div#overview").find('#internal_cost_'+offset).val(valueid[1].trim());
+						 		
+						 		}
+
+						 		if(valueid[2]=="")
+						 		{
+						 			$("#saveFinal").removeClass('hidden');
+						 		}
+							}
+							
+						}
+
+						fncalculateAutoTotal();
+												
+						
+						
+							 
+						
+						 	
+			     	 }
+			    });
+		    }
+
+		}
+
+		
+		function oneshotno()
+		{
+			volume_false=true;
+			nb_words=parseInt($("#popnb_words").text());
+			duration_missionval=parseInt($('#popmission').text());
+			totalvolumeval=parseInt($('#popvolume').text());
+			volumeMax=parseInt($('#volume_option').val());
+			tempotype=parseInt($('#tempo_option').val());
+			tempotypeconfig=$('#tempo_option option:selected').attr('tempoconfig');
+			configval=tempotypeconfig.split('-');
+			
+			$('.tempoEdit').find(".alert-danger").remove();
+			deleveryvolumeoption=$('#tempo_volume_option').val();
+			tempoLength=parseInt($('#tempo_length').val());
+			tempoLengthoption=$('#tempo_duration_option').val();
+
+				if(tempoLengthoption=='days'){
+					 tempo_callenth=tempoLength;
+				}else if(tempoLengthoption=='week')	{
+					tempo_callenth=tempoLength*7;
+				}
+				else if(tempoLengthoption=='month')	{
+					tempo_callenth=tempoLength*30;
+					}
+				else if(tempoLengthoption=='year')	{
+					tempo_callenth=tempoLength*365;
+					}
+
+			configcal=(parseInt(configval[0])*parseInt(configval[1]))*tempo_callenth;
+			tempocalculated=(nb_words*volumeMax)*tempo_callenth;
+			//alert(configcal+' config val '+ tempocalculated);
+			caltotval=Math.round((duration_missionval/tempo_callenth)*volumeMax);
+			//alert(totalvolumeval+' calculate volume '+caltotval);
+			if(caltotval!=totalvolumeval)
+			{
+				$('.error').append("<span class='alert-danger col-md-12' style='padding:0 5px;'>Le tempo indiqu&#233; ne correspond pas au volume et &#224; la  dur&#233;e de la mission</span>");
+				volume_false=false;
+			}
+			else if(configcal<tempocalculated)
+			{
+				$('.error').append("<span class='alert-danger col-md-12' style='padding:0 5px;'>The volume should below the corresponded configure volume ("+configval[0]+" words "+configval[1]+" days) </span>");
+				$("#volume_option").focus();
+				volume_false=false;
+			}
+
+
+		} 
+
+
+	</script>
+ {/literal}
