@@ -38,6 +38,20 @@ class StatsController extends Ep_Controller_Action
         array_unshift($languages, "S&eacute;lectionner");
         $this->_view->languages_array = $languages;
 
+$this->product_array=array(
+    							"redaction"=>"Writing",
+								"translation"=>"Translation"
+        						);       
+		/* added w.r.t new titles in invoices*/
+        $this->_view->producttype_group_array=$this->producttype_group_array=array(
+    							"article_de_blog"=>"Articles Edito",
+								"descriptif_produit"=>"Articles Edito",
+								"guide"=>"Articles Edito",
+								"news"=>"Articles Edito",
+								"article_seo"=>"Article SEO",
+								"wordings"=>"Articles SEO",
+								"autre"=>"Articles SEO"
+        					);
 	}
 
     public function contribPaymentsListAction()
@@ -353,15 +367,17 @@ class StatsController extends Ep_Controller_Action
 		    $client_id= $details['client_id'];
                     $client_name=$ticket_obj->getUserName($client_id);
                     $article_created_date=ucfirst(strftime("%b %Y",strtotime($details['article_created_date'])));
+                    /*invoice article titles update*/
+                    $details['AOTitle']=$this->generateMissionTitle($details);
 					
                     $invoice_details_pdf.='<tr>
-                                            <td>'.$details['AOTitle'].'</td>
+                                            <td>'.$details['AOTitle'].' - '.$client_name.' - '.$article_created_date.'</td>
                                             <td class="change_order_total_col">'.number_format($details['price'],2).'</td>
                                             </tr>';
                 }
                 $invoice_details_pdf.='<tr>
-                                        <td>Total</td>
-                                    <td class="change_order_total_col">'.number_format($total,2).(($details['currency']=='pound') ? '&#163;' : '&#x80;' ).'</td>
+                                        <td><strong>Total</strong></td>
+                                    <td class="change_order_total_col"><strong>'.number_format($total,2).(($details['currency']=='pound') ? '&#163;' : '&#x80;' ).'</strong></td>
                                         </tr>
                                     </tbody>
                                 </table>';  
@@ -520,6 +536,26 @@ class StatsController extends Ep_Controller_Action
                $this->_view->full_name = $full_name;
 
                $this->render(($_GET['print'] == "yes") ? "stats_invoiceprint" : "stats_invoice");
+   }
+   /*generating article titles*/
+    function generateMissionTitle($articleDetails)
+    {
+        if(!$articleDetails['contract_mission_id'])
+        {
+            $missionTitle=$articleDetails['AOTitle'];
+        }
+        else
+        {           
+            $language_source=$articleDetails['language_source'];
+            $language=$articleDetails['language'];
+            if($articleDetails['product']=='translation')
+                $lang_text=strtoupper($language_source.'/'.$language);
+            else
+                $lang_text=strtoupper($language);
+            $missionTitle=$articleDetails['files_pack'].' '.$this->product_array[$articleDetails['product']].' '.$this->producttype_group_array[$articleDetails['type']].' '.$lang_text;
+        }
+        return $missionTitle;
+        //echo '<pre>';print_r($articleDetails);exit;
    }
 	
 	//change status to inprocess
