@@ -85,7 +85,11 @@ var count = getUrlVars()["count"];
                         "aButtons" : ["csv", "xls", "pdf"]
                     }],
                     "sSwfPath" : "/BO/theme/gebo/lib/datatables/extras/TableTools/media/swf/copy_csv_xls_pdf.swf"
-                },
+                }
+                /**Author:Thilagam**/
+                /**Date:31/5/2016**/
+                /**Reason:Commented the below code as it was throwing error**/
+                /*,
                 "fnFooterCallback": function ( nRow, aaData, iStart, iEnd, aiDisplay ) {
                     //alert('nRow = '+nRow+' iStart = '+iStart+' iEnd = '+iEnd+' aiDisplay = '+aiDisplay);
                     var tmp ;
@@ -126,7 +130,7 @@ var count = getUrlVars()["count"];
                         iPageMarket += tmp*1;
                     }
                     $("#sumup").html("<span class='label label-success'>"+(formatNumber(iPageMarket))+"</span> / <span class='label label-inverse'>"+(formatNumber(iTotalMarket))+"</span>");
-                }
+                }*/
             });
         }
         else

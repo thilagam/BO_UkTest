@@ -1232,7 +1232,6 @@ $this->product_array=array(
         $sLimit = "";
         $countcontribs  = $invoice_obj->paidInvoices($sWhere, $sOrder, $sLimit, $condition);
         $iTotal = count($countcontribs);
-
         $output = array(
             "sEcho" => intval($_GET['sEcho']),
             "iTotalRecords" => $iTotal,

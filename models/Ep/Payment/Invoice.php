@@ -112,7 +112,7 @@ class Ep_Payment_Invoice extends Ep_Db_Identifier
                   i.total_invoice_paid, i.payment_type, i.currency, i.status, CONCAT(up.first_name,' ',up.last_name) as first_name, up.user_id AS identifier  from ".$this->_name." i
 	              INNER JOIN UserPlus up ON i.user_id=up.user_id
 	              WHERE i.status IN ('Paid') ".$where." ".$sWhere." ".$sOrder." ".$sLimit."";
-	  //echo $query;//exit;
+	  //echo $query;exit;
         if(($result = $this->getQuery($query,true)) != NULL)
 			return $result;
 		else
