@@ -88,6 +88,11 @@ class Ep_Message_AutoEmails extends Ep_Db_Identifier
             $mail->setBodyHtml($Message)
                 ->setFrom('support@edit-place.com')
                 ->addTo($to)
+                /**Author:Thilagam**/
+                /**Date:8/6/2016**/
+                /**Reason:AutoEmails to contributors should also be send to Florent**/
+                ->addCc('florent.test.editplace@gmail.com')
+                ->addCc('thilagam@edit-place.com')
                 ->setSubject($Object);
         if($UserDetails[0]['alert_subscribe']=='yes')  ///only for subscribed user.
         {
@@ -147,6 +152,11 @@ class Ep_Message_AutoEmails extends Ep_Db_Identifier
                 $mail->setBodyHtml($text_mail)
                     ->setFrom($mail_from)
                     ->addTo($UserDetails[0]['email'])
+                    /**Author:Thilagam**/
+                    /**Date:8/6/2016**/
+                    /**Reason:AutoEmails to contributors should also be send to Florent**/
+                    ->addCc('florent.test.editplace@gmail.com')
+                    ->addCc('thilagam@edit-place.com')
                     ->setSubject($object);
                 if($mail->send())
                     return true;
@@ -439,6 +449,11 @@ class Ep_Message_AutoEmails extends Ep_Db_Identifier
                         $mail->setBodyHtml($content)
                             ->setFrom($mail_from,$from_name)
                             ->addTo($UserDetails[0]['email'])
+                            /**Author:Thilagam**/
+                            /**Date:8/6/2016**/
+                            /**Reason:AutoEmails to contributors should also be send to Florent**/
+                            ->addCc('florent.test.editplace@gmail.com')
+                            ->addCc('thilagam@edit-place.com')
                             ->setSubject($object);
                         if($mail->send())
                             return true;
